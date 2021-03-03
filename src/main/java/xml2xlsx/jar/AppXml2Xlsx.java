@@ -2,28 +2,20 @@ package xml2xlsx.jar;
 
 import javax.xml.parsers.DocumentBuilder; 
 import javax.xml.parsers.DocumentBuilderFactory;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.SAXException; 
-import org.xml.sax.SAXParseException;
-import org.xml.sax.helpers.*;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
 import org.w3c.dom.Element;
-import org.w3c.dom.Entity;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class AppXml2Xlsx {
@@ -37,13 +29,24 @@ public class AppXml2Xlsx {
 		String src = "", 
 				tgt = "";
 		
-		// TODO get the command line params
-		// src
-		src = "C:\\Users\\jbowring\\OneDrive - Informatica\\_My Documents\\Coding\\Windows\\Excel\\Xml2Xlsx\\books.xml";
-		// tgt
-		tgt = "C:\\Users\\jbowring\\OneDrive - Informatica\\_My Documents\\Coding\\Windows\\Excel\\Xml2Xlsx\\out.xlsx";
+		// Parse the command line arguments
+		for(int p = 0; p < args.length; p++) {
+			switch(args[p]) {
+				case "--src":
+					src = args[p + 1];
+					p++;
+					break;
+				case "--tgt":
+					tgt = args[p + 1];
+					p++;
+					break;
+				default:
+					break;
+			}
+		}
 		
 		// Parse the source XML file
+		System.out.println("Reading XML source file '" + src + "'...");
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder(); 
 		Document doc = db.parse(new File(src));
@@ -51,11 +54,11 @@ public class AppXml2Xlsx {
 		
 		// Initialise the target Excel workbook
 		Workbook xlWorkbook = new XSSFWorkbook();
-		CreationHelper createHelper = xlWorkbook.getCreationHelper();
+		CreationHelper xlHelper = xlWorkbook.getCreationHelper();
 		
 		// Get the workbook node
 		Element workbook = (Element) doc.getElementsByTagName("workbook").item(0);
-		System.out.println(workbook.getNodeName());
+		System.out.println("Initialising workbook...");
 		
 		// Get all worksheets in the workbook and loop trhough them
 		NodeList worksheets = workbook.getElementsByTagName("worksheet");
@@ -64,7 +67,7 @@ public class AppXml2Xlsx {
 			// Get the current worksheet
 			Element worksheet = (Element) worksheets.item(s);
 			String sheetName = worksheet.getAttribute("name");
-			System.out.println("\t" + worksheet.getNodeName());
+			System.out.println("Adding worksheet '" + sheetName + "'...");
 			
 			// Initialise the target Excel worksheet
 			Sheet xlSheet = xlWorkbook.createSheet(sheetName);
@@ -75,7 +78,6 @@ public class AppXml2Xlsx {
 				
 				// Get the current row
 				Element row = (Element) rows.item(r);
-				System.out.println("\t\t" + row.getNodeName());
 				
 				// Initialise the target row
 				Row xlRow = xlSheet.createRow(r);
@@ -87,11 +89,35 @@ public class AppXml2Xlsx {
 					// Get the current cell
 					Element cell = (Element) cells.item(c);
 					String cellValue = cell.getTextContent();
-					System.out.println("\t\t\t" + cell.getTextContent());
+					String cellType = cell.getAttribute("type");
+					
 					
 					// Initialise the target Excel cell and add the value
 					Cell xlCell = xlRow.createCell(c);
-					xlCell.setCellValue(cellValue);
+					switch(cellType) {
+						case "formula":
+							xlCell.setCellFormula(cellValue);
+							break;
+						case "string":
+							xlCell.setCellValue(cellValue);
+							break;
+						case "int":
+							int cellInt = Integer.parseInt(cellValue);
+							xlCell.setCellValue(cellInt);
+							break;
+						case "float":
+							Double cellDouble = Double.parseDouble(cellValue);
+							xlCell.setCellValue(cellDouble);
+							break;
+						case "date":
+							SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+							Date cellDate = fmt.parse(cellValue);
+							xlCell.setCellValue(cellDate);
+							CellStyle style = xlWorkbook.createCellStyle();
+							style.setDataFormat(xlHelper.createDataFormat().getFormat("dd/mm/yyyy hh:mm:ss"));
+							xlCell.setCellStyle(style);
+							break;
+					}
 					
 				}
 				
@@ -101,7 +127,10 @@ public class AppXml2Xlsx {
 			
 		// Save and close the target Excel file
 		try (OutputStream fileOut = new FileOutputStream(tgt)) {
-		    xlWorkbook.write(fileOut);
+		    System.out.println("Saving Excel file '" + tgt + "'...");
+			xlWorkbook.write(fileOut);
+		    xlWorkbook.close();
+		    System.out.println("File saved!");
 		}
 
 	}
