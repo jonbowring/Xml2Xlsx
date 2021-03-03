@@ -1,4 +1,4 @@
-package xml2xlsx.jar;
+package com.informatica.xml2xlsx;
 
 import javax.xml.parsers.DocumentBuilder; 
 import javax.xml.parsers.DocumentBuilderFactory;
