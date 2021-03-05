@@ -117,6 +117,13 @@ public class AppXml2Xlsx {
 					
 				}
 				
+				// If the style has a wrap element then set wrap to true
+				if(styleEl.getElementsByTagName("wrap").getLength() > 0 ) {
+					
+					style.setWrap(true);
+					
+				}
+				
 				
 				// If the style has border elements
 				NodeList borders = styleEl.getElementsByTagName("border");
@@ -182,46 +189,6 @@ public class AppXml2Xlsx {
 					// Get the current cell
 					Element cell = (Element) cells.item(c);
 					String cellValue = cell.getTextContent();
-					
-					/*
-					// Get the cell type if it is available
-					String cellType = "";
-					if(cell.hasAttribute("type")) {
-						cellType = cell.getAttribute("type");
-					}
-					
-					// Initialise the target Excel cell and add the value
-					Cell xlCell = xlRow.createCell(c);
-					CellStyle cellStyle = xlWorkbook.createCellStyle();
-					
-					// Apply the cell data types
-					switch(cellType) {
-						case "formula":
-							xlCell.setCellFormula(cellValue);
-							break;
-						case "string":
-							xlCell.setCellValue(cellValue);
-							break;
-						case "int":
-							int cellInt = Integer.parseInt(cellValue);
-							xlCell.setCellValue(cellInt);
-							break;
-						case "float":
-							Double cellDouble = Double.parseDouble(cellValue);
-							xlCell.setCellValue(cellDouble);
-							break;
-						case "date":
-							SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-							Date cellDate = fmt.parse(cellValue);
-							xlCell.setCellValue(cellDate);
-							cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat("dd/mm/yyyy hh:mm:ss"));
-							break;
-						default:
-							xlCell.setCellValue(cellValue);
-							break;
-					}
-					
-					*/
 					
 					// Initialise the target Excel cell and add the value
 					Cell xlCell = xlRow.createCell(c);
@@ -380,6 +347,9 @@ public class AppXml2Xlsx {
 							}
 							
 						}
+						
+						// Apply the cell wrapping
+						cellStyle.setWrapText(style.getWrap());
 						
 					}
 					else {

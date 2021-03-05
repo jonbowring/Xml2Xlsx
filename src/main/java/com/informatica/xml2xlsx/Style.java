@@ -9,6 +9,7 @@ public class Style {
 	 */
 	
 	private String name, valign, halign, format, pattern;
+	private Boolean wrap;
 	private HashMap<String, Border> borderMap;
 	
 	/*
@@ -21,6 +22,7 @@ public class Style {
 		this.halign = "";
 		this.format = "";
 		this.pattern = "";
+		this.wrap = false;
 		this.borderMap = new HashMap<String, Border>();
 	}
 	
@@ -46,6 +48,10 @@ public class Style {
 	
 	public String getPattern() {
 		return this.pattern;
+	}
+	
+	public Boolean getWrap() {
+		return this.wrap;
 	}
 	
 	public HashMap<String, Border> getBorderMap() {
@@ -74,6 +80,10 @@ public class Style {
 	
 	public void setPattern(String pattern) {
 		this.pattern = pattern;
+	}
+	
+	public void setWrap(Boolean wrap) {
+		this.wrap = wrap;
 	}
 	
 	public void setBorderMap(HashMap<String, Border> borderMap) {
