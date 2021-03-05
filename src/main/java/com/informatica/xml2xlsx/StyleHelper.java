@@ -5,20 +5,39 @@ import java.util.HashMap;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
-public class ColourLookup {
+public class StyleHelper {
 	
 	/*
 	 * Attribute declaration
 	 */
 	
+	private HashMap<String, BorderStyle> styleMap;
 	private HashMap<String, IndexedColors> colourMap;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public ColourLookup() {
+	public StyleHelper() {
 		
+		// Initialise the border styles
+		this.styleMap = new HashMap<String, BorderStyle>();
+		this.styleMap.put("dash-dot", BorderStyle.DASH_DOT);
+		this.styleMap.put("dash-dot-dot", BorderStyle.DASH_DOT_DOT);
+		this.styleMap.put("dashed", BorderStyle.DASHED);
+		this.styleMap.put("dotted", BorderStyle.DOTTED);
+		this.styleMap.put("double", BorderStyle.DOUBLE);
+		this.styleMap.put("hair", BorderStyle.HAIR);
+		this.styleMap.put("medium", BorderStyle.MEDIUM);
+		this.styleMap.put("medium-dash-dot", BorderStyle.MEDIUM_DASH_DOT);
+		this.styleMap.put("medium-dash-dot-dot", BorderStyle.MEDIUM_DASH_DOT_DOT);
+		this.styleMap.put("medium-dashed", BorderStyle.MEDIUM_DASHED);
+		this.styleMap.put("none", BorderStyle.NONE);
+		this.styleMap.put("slanted-dash-dot", BorderStyle.SLANTED_DASH_DOT);
+		this.styleMap.put("thick", BorderStyle.THICK);
+		this.styleMap.put("thin", BorderStyle.THIN);
+		
+		// Initialise the colours
 		this.colourMap = new HashMap<String, IndexedColors>();
 		this.colourMap.put("aqua", IndexedColors.AQUA);
 		this.colourMap.put("automatic", IndexedColors.AUTOMATIC);
@@ -84,8 +103,13 @@ public class ColourLookup {
 	 * Getters
 	 */
 	
+	public HashMap<String, BorderStyle> getBorderStyles() {
+		return this.styleMap;
+	}
+	
 	public HashMap<String, IndexedColors> getColours() {
 		return this.colourMap;
 	}
+	
 	
 }

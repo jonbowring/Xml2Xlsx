@@ -8,7 +8,7 @@ public class Style {
 	 * Attribute declaration
 	 */
 	
-	private String name, valign, halign;
+	private String name, valign, halign, format, pattern;
 	private HashMap<String, Border> borderMap;
 	
 	/*
@@ -19,6 +19,8 @@ public class Style {
 		this.name = name;
 		this.valign = "";
 		this.halign = "";
+		this.format = "";
+		this.pattern = "";
 		this.borderMap = new HashMap<String, Border>();
 	}
 	
@@ -36,6 +38,14 @@ public class Style {
 	
 	public String getHAlign() {
 		return this.halign;
+	}
+	
+	public String getFormat() {
+		return this.format;
+	}
+	
+	public String getPattern() {
+		return this.pattern;
 	}
 	
 	public HashMap<String, Border> getBorderMap() {
@@ -56,6 +66,14 @@ public class Style {
 	
 	public void setHAlign(String halign) {
 		this.halign = halign;
+	}
+	
+	public void setFormat(String format) {
+		this.format = format;
+	}
+	
+	public void setPattern(String pattern) {
+		this.pattern = pattern;
 	}
 	
 	public void setBorderMap(HashMap<String, Border> borderMap) {
