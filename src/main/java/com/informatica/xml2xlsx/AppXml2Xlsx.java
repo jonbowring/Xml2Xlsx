@@ -35,8 +35,7 @@ public class AppXml2Xlsx {
 		String src = "", 
 				tgt = "";
 		HashMap<String, Style> styleMap = new HashMap<String, Style>();
-		BorderStyleLookup borderStyles = new BorderStyleLookup();
-		ColourLookup colours = new ColourLookup();
+		StyleHelper styleHelper = new StyleHelper();
 		
 		// Parse the command line arguments
 		for(int p = 0; p < args.length; p++) {
@@ -84,15 +83,64 @@ public class AppXml2Xlsx {
 				Element styleEl = (Element) styles.item(y);
 				Style style = new Style(styleEl.getAttribute("name"));
 				
-				// If it has the valign attribute then save it
-				if(styleEl.hasAttribute("valign")) {
-					style.setVAlign(styleEl.getAttribute("valign"));
+				// If the style has an attribute element
+				if(styleEl.getElementsByTagName("align").getLength() > 0 ) {
+					
+					Element align = (Element) styleEl.getElementsByTagName("align").item(0);
+					
+					// If it has the valign attribute then save it
+					if(align.hasAttribute("vertical")) {
+						style.setVAlign(align.getAttribute("vertical"));
+					}
+					
+					// If it has the halign attribute then save it
+					if(align.hasAttribute("horizontal")) {
+						style.setHAlign(align.getAttribute("horizontal"));
+					}
+					
 				}
 				
-				// If it has the halign attribute then save it
-				if(styleEl.hasAttribute("halign")) {
-					style.setHAlign(styleEl.getAttribute("halign"));
+				// If the style has a format element
+				if(styleEl.getElementsByTagName("format").getLength() > 0 ) {
+					
+					Element format = (Element) styleEl.getElementsByTagName("format").item(0);
+					
+					// If it has the type element then save it 
+					if(format.hasAttribute("type")) {
+						style.setFormatType(format.getAttribute("type"));
+					}
+					
+					// If it has the pattern element then save it 
+					if(format.hasAttribute("pattern")) {
+						style.setFormatPattern(format.getAttribute("pattern"));
+					}
+					
 				}
+				
+				// If the style has a fill element
+				if(styleEl.getElementsByTagName("fill").getLength() > 0 ) {
+					
+					Element fill = (Element) styleEl.getElementsByTagName("fill").item(0);
+					
+					// If it has the colour element then save it 
+					if(fill.hasAttribute("colour")) {
+						style.setFillColour(fill.getAttribute("colour"));
+					}
+					
+					// If it has the pattern element then save it 
+					if(fill.hasAttribute("pattern")) {
+						style.setFillPattern(fill.getAttribute("pattern"));
+					}
+					
+				}
+				
+				// If the style has a wrap element then set wrap to true
+				if(styleEl.getElementsByTagName("wrap").getLength() > 0 ) {
+					
+					style.setWrap(true);
+					
+				}
+				
 				
 				// If the style has border elements
 				NodeList borders = styleEl.getElementsByTagName("border");
@@ -159,50 +207,51 @@ public class AppXml2Xlsx {
 					Element cell = (Element) cells.item(c);
 					String cellValue = cell.getTextContent();
 					
-					// Get the cell type if it is available
-					String cellType = "";
-					if(cell.hasAttribute("type")) {
-						cellType = cell.getAttribute("type");
-					}
-					
-					
-					
 					// Initialise the target Excel cell and add the value
 					Cell xlCell = xlRow.createCell(c);
 					CellStyle cellStyle = xlWorkbook.createCellStyle();
-					
-					// Apply the cell data types
-					switch(cellType) {
-						case "formula":
-							xlCell.setCellFormula(cellValue);
-							break;
-						case "string":
-							xlCell.setCellValue(cellValue);
-							break;
-						case "int":
-							int cellInt = Integer.parseInt(cellValue);
-							xlCell.setCellValue(cellInt);
-							break;
-						case "float":
-							Double cellDouble = Double.parseDouble(cellValue);
-							xlCell.setCellValue(cellDouble);
-							break;
-						case "date":
-							SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-							Date cellDate = fmt.parse(cellValue);
-							xlCell.setCellValue(cellDate);
-							cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat("dd/mm/yyyy hh:mm:ss"));
-							break;
-						default:
-							xlCell.setCellValue(cellValue);
-							break;
-					}
 					
 					// If a cell style has been applied then add it to the cell
 					if(cell.hasAttribute("style")) {
 						
 						// Get the style settings
 						Style style = styleMap.get(cell.getAttribute("style"));
+						
+						// Apply the cell format if set
+						String formatType = style.getFormatType();
+						if(formatType.length() > 0) {
+							
+							// Apply the cell data types
+							switch(formatType) {
+								case "formula":
+									xlCell.setCellFormula(cellValue);
+									break;
+								case "string":
+									xlCell.setCellValue(cellValue);
+									break;
+								case "int":
+									int cellInt = Integer.parseInt(cellValue);
+									xlCell.setCellValue(cellInt);
+									break;
+								case "float":
+									Double cellDouble = Double.parseDouble(cellValue);
+									xlCell.setCellValue(cellDouble);
+									break;
+								case "date":
+									SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+									Date cellDate = fmt.parse(cellValue);
+									xlCell.setCellValue(cellDate);
+									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(style.getFormatPattern()));
+									break;
+								default:
+									xlCell.setCellValue(cellValue);
+									break;
+							}
+							
+						}
+						else {
+							xlCell.setCellValue(cellValue);
+						}
 						
 						// Apply the vertical alignment if set
 						String valign = style.getVAlign();
@@ -249,13 +298,13 @@ public class AppXml2Xlsx {
 						if(borderTop != null) {
 							
 							// Apply the style if set
-							BorderStyle borderStyle = borderStyles.getBorderStyles().get(borderTop.getType());
+							BorderStyle borderStyle = styleHelper.getBorderStyles().get(borderTop.getType());
 							if(borderStyle != null) {
 								cellStyle.setBorderTop(borderStyle);
 							}
 							
 							// Apply the colour if set
-							IndexedColors borderColour = colours.getColours().get(borderTop.getColour());
+							IndexedColors borderColour = styleHelper.getColours().get(borderTop.getColour());
 							if(borderColour != null) {
 								cellStyle.setTopBorderColor(borderColour.getIndex());
 							}
@@ -267,13 +316,13 @@ public class AppXml2Xlsx {
 						if(borderRight != null) {
 							
 							// Apply the style if set
-							BorderStyle borderStyle = borderStyles.getBorderStyles().get(borderRight.getType());
+							BorderStyle borderStyle = styleHelper.getBorderStyles().get(borderRight.getType());
 							if(borderStyle != null) {
 								cellStyle.setBorderRight(borderStyle);
 							}
 							
 							// Apply the colour if set
-							IndexedColors borderColour = colours.getColours().get(borderRight.getColour());
+							IndexedColors borderColour = styleHelper.getColours().get(borderRight.getColour());
 							if(borderColour != null) {
 								cellStyle.setRightBorderColor(borderColour.getIndex());
 							}
@@ -285,13 +334,13 @@ public class AppXml2Xlsx {
 						if(borderBottom != null) {
 							
 							// Apply the style if set
-							BorderStyle borderStyle = borderStyles.getBorderStyles().get(borderBottom.getType());
+							BorderStyle borderStyle = styleHelper.getBorderStyles().get(borderBottom.getType());
 							if(borderStyle != null) {
 								cellStyle.setBorderBottom(borderStyle);
 							}
 							
 							// Apply the colour if set
-							IndexedColors borderColour = colours.getColours().get(borderBottom.getColour());
+							IndexedColors borderColour = styleHelper.getColours().get(borderBottom.getColour());
 							if(borderColour != null) {
 								cellStyle.setBottomBorderColor(borderColour.getIndex());
 							}
@@ -303,19 +352,37 @@ public class AppXml2Xlsx {
 						if(borderLeft != null) {
 							
 							// Apply the style if set
-							BorderStyle borderStyle = borderStyles.getBorderStyles().get(borderLeft.getType());
+							BorderStyle borderStyle = styleHelper.getBorderStyles().get(borderLeft.getType());
 							if(borderStyle != null) {
 								cellStyle.setBorderLeft(borderStyle);
 							}
 							
 							// Apply the colour if set
-							IndexedColors borderColour = colours.getColours().get(borderLeft.getColour());
+							IndexedColors borderColour = styleHelper.getColours().get(borderLeft.getColour());
 							if(borderColour != null) {
 								cellStyle.setLeftBorderColor(borderColour.getIndex());
 							}
 							
 						}
 						
+						// Apply the cell wrapping
+						cellStyle.setWrapText(style.getWrap());
+						
+						// Apply the fill colour if set
+						String fillColour = style.getFillColour();
+						if(fillColour.length() > 0) {
+							cellStyle.setFillBackgroundColor(styleHelper.getColours().get(fillColour).getIndex());
+						}
+						
+						// Apply the fill colour if set
+						String fillPattern = style.getFillPattern();
+						if(fillPattern.length() > 0) {
+							cellStyle.setFillPattern(styleHelper.getFillPatterns().get(fillPattern));
+						}
+						
+					} // End if has style
+					else {
+						xlCell.setCellValue(cellValue);
 					}
 					
 					// Save the style to the cell

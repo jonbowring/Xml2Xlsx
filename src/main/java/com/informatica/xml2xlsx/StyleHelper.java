@@ -3,22 +3,43 @@ package com.informatica.xml2xlsx;
 import java.util.HashMap;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
-public class ColourLookup {
+public class StyleHelper {
 	
 	/*
 	 * Attribute declaration
 	 */
 	
+	private HashMap<String, BorderStyle> styleMap;
 	private HashMap<String, IndexedColors> colourMap;
+	private HashMap<String, FillPatternType> fillPatternMap;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public ColourLookup() {
+	public StyleHelper() {
 		
+		// Initialise the border styles
+		this.styleMap = new HashMap<String, BorderStyle>();
+		this.styleMap.put("dash-dot", BorderStyle.DASH_DOT);
+		this.styleMap.put("dash-dot-dot", BorderStyle.DASH_DOT_DOT);
+		this.styleMap.put("dashed", BorderStyle.DASHED);
+		this.styleMap.put("dotted", BorderStyle.DOTTED);
+		this.styleMap.put("double", BorderStyle.DOUBLE);
+		this.styleMap.put("hair", BorderStyle.HAIR);
+		this.styleMap.put("medium", BorderStyle.MEDIUM);
+		this.styleMap.put("medium-dash-dot", BorderStyle.MEDIUM_DASH_DOT);
+		this.styleMap.put("medium-dash-dot-dot", BorderStyle.MEDIUM_DASH_DOT_DOT);
+		this.styleMap.put("medium-dashed", BorderStyle.MEDIUM_DASHED);
+		this.styleMap.put("none", BorderStyle.NONE);
+		this.styleMap.put("slanted-dash-dot", BorderStyle.SLANTED_DASH_DOT);
+		this.styleMap.put("thick", BorderStyle.THICK);
+		this.styleMap.put("thin", BorderStyle.THIN);
+		
+		// Initialise the colours
 		this.colourMap = new HashMap<String, IndexedColors>();
 		this.colourMap.put("aqua", IndexedColors.AQUA);
 		this.colourMap.put("automatic", IndexedColors.AUTOMATIC);
@@ -78,14 +99,45 @@ public class ColourLookup {
 		this.colourMap.put("yellow", IndexedColors.YELLOW);
 		this.colourMap.put("yellow1", IndexedColors.YELLOW1);
 		
+		// Initialise the fill pattern types
+		this.fillPatternMap = new HashMap<String, FillPatternType>();
+		this.fillPatternMap.put("alt-bars", FillPatternType.ALT_BARS);
+		this.fillPatternMap.put("big-spots", FillPatternType.BIG_SPOTS);
+		this.fillPatternMap.put("bricks", FillPatternType.BRICKS);
+		this.fillPatternMap.put("diamonds", FillPatternType.DIAMONDS);
+		this.fillPatternMap.put("fine-dots", FillPatternType.FINE_DOTS);
+		this.fillPatternMap.put("least-dots", FillPatternType.LEAST_DOTS);
+		this.fillPatternMap.put("less-dots", FillPatternType.LESS_DOTS);
+		this.fillPatternMap.put("no-fill", FillPatternType.NO_FILL);
+		this.fillPatternMap.put("solid-foreground", FillPatternType.SOLID_FOREGROUND);
+		this.fillPatternMap.put("sparse-dots", FillPatternType.SPARSE_DOTS);
+		this.fillPatternMap.put("squares", FillPatternType.SQUARES);
+		this.fillPatternMap.put("thick-backward-diag", FillPatternType.THICK_BACKWARD_DIAG);
+		this.fillPatternMap.put("thick-forward-diag", FillPatternType.THICK_FORWARD_DIAG);
+		this.fillPatternMap.put("thick-horz-bands", FillPatternType.THICK_HORZ_BANDS);
+		this.fillPatternMap.put("thick-vert-bands", FillPatternType.THICK_VERT_BANDS);
+		this.fillPatternMap.put("thin-backward-diag", FillPatternType.THIN_BACKWARD_DIAG);
+		this.fillPatternMap.put("thin-forward-diag", FillPatternType.THIN_FORWARD_DIAG);
+		this.fillPatternMap.put("thin-horz-bands", FillPatternType.THIN_HORZ_BANDS);
+		this.fillPatternMap.put("thin-vert-bands", FillPatternType.THIN_VERT_BANDS);
+		
 	}
 	
 	/*
 	 * Getters
 	 */
 	
+	public HashMap<String, BorderStyle> getBorderStyles() {
+		return this.styleMap;
+	}
+	
 	public HashMap<String, IndexedColors> getColours() {
 		return this.colourMap;
 	}
+	
+	public HashMap<String, FillPatternType> getFillPatterns() {
+		return this.fillPatternMap;
+	}
+	
 	
 }
