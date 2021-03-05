@@ -10,10 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -33,6 +35,8 @@ public class AppXml2Xlsx {
 		String src = "", 
 				tgt = "";
 		HashMap<String, Style> styleMap = new HashMap<String, Style>();
+		BorderStyleLookup borderStyles = new BorderStyleLookup();
+		ColourLookup colours = new ColourLookup();
 		
 		// Parse the command line arguments
 		for(int p = 0; p < args.length; p++) {
@@ -90,8 +94,36 @@ public class AppXml2Xlsx {
 					style.setHAlign(styleEl.getAttribute("halign"));
 				}
 				
+				// If the style has border elements
+				NodeList borders = styleEl.getElementsByTagName("border");
+				if(borders.getLength() > 0) {
+					
+					// Loop through all of the borders
+					for(int b = 0; b < borders.getLength(); b++) {
+						
+						// Initialise the border object
+						Element borderEl = (Element) borders.item(b);
+						Border border;
+						if(borderEl.hasAttribute("type") && borderEl.hasAttribute("colour")) {
+							border = new Border(borderEl.getAttribute("pos"), borderEl.getAttribute("type"), borderEl.getAttribute("colour"));
+						}
+						else if(borderEl.hasAttribute("type")) {
+							border = new Border(borderEl.getAttribute("pos"), borderEl.getAttribute("type"));
+						}
+						else {
+							border = new Border(borderEl.getAttribute("pos"));
+						}
+						
+						// Add the border to the style
+						style.addBorder(border);
+					}
+					
+				}
+				
 				// Add the current style to the hash map
 				styleMap.put(styleEl.getAttribute("name"), style);
+				
+				
 			}
 		}
 		
@@ -208,6 +240,78 @@ public class AppXml2Xlsx {
 									break;
 								default:
 									break;
+							}
+							
+						}
+						
+						// Apply the top border if set
+						Border borderTop = style.getBorder("top");
+						if(borderTop != null) {
+							
+							// Apply the style if set
+							BorderStyle borderStyle = borderStyles.getBorderStyles().get(borderTop.getType());
+							if(borderStyle != null) {
+								cellStyle.setBorderTop(borderStyle);
+							}
+							
+							// Apply the colour if set
+							IndexedColors borderColour = colours.getColours().get(borderTop.getColour());
+							if(borderColour != null) {
+								cellStyle.setTopBorderColor(borderColour.getIndex());
+							}
+							
+						}
+						
+						// Apply the right border if set
+						Border borderRight = style.getBorder("right");
+						if(borderRight != null) {
+							
+							// Apply the style if set
+							BorderStyle borderStyle = borderStyles.getBorderStyles().get(borderRight.getType());
+							if(borderStyle != null) {
+								cellStyle.setBorderRight(borderStyle);
+							}
+							
+							// Apply the colour if set
+							IndexedColors borderColour = colours.getColours().get(borderRight.getColour());
+							if(borderColour != null) {
+								cellStyle.setRightBorderColor(borderColour.getIndex());
+							}
+							
+						}
+						
+						// Apply the bottom border if set
+						Border borderBottom = style.getBorder("bottom");
+						if(borderBottom != null) {
+							
+							// Apply the style if set
+							BorderStyle borderStyle = borderStyles.getBorderStyles().get(borderBottom.getType());
+							if(borderStyle != null) {
+								cellStyle.setBorderBottom(borderStyle);
+							}
+							
+							// Apply the colour if set
+							IndexedColors borderColour = colours.getColours().get(borderBottom.getColour());
+							if(borderColour != null) {
+								cellStyle.setBottomBorderColor(borderColour.getIndex());
+							}
+							
+						}
+						
+						// Apply the left border if set
+						Border borderLeft = style.getBorder("left");
+						if(borderLeft != null) {
+							
+							// Apply the style if set
+							BorderStyle borderStyle = borderStyles.getBorderStyles().get(borderLeft.getType());
+							if(borderStyle != null) {
+								cellStyle.setBorderLeft(borderStyle);
+							}
+							
+							// Apply the colour if set
+							IndexedColors borderColour = colours.getColours().get(borderLeft.getColour());
+							if(borderColour != null) {
+								cellStyle.setLeftBorderColor(borderColour.getIndex());
 							}
 							
 						}

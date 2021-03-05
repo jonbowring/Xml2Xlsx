@@ -1,5 +1,7 @@
 package com.informatica.xml2xlsx;
 
+import java.util.HashMap;
+
 public class Style {
 	
 	/*
@@ -7,6 +9,7 @@ public class Style {
 	 */
 	
 	private String name, valign, halign;
+	private HashMap<String, Border> borderMap;
 	
 	/*
 	 * Constructors
@@ -16,6 +19,7 @@ public class Style {
 		this.name = name;
 		this.valign = "";
 		this.halign = "";
+		this.borderMap = new HashMap<String, Border>();
 	}
 	
 	/*
@@ -34,6 +38,10 @@ public class Style {
 		return this.halign;
 	}
 	
+	public HashMap<String, Border> getBorderMap() {
+		return this.borderMap;
+	}
+	
 	/*
 	 * Setters
 	 */
@@ -48,6 +56,26 @@ public class Style {
 	
 	public void setHAlign(String halign) {
 		this.halign = halign;
+	}
+	
+	public void setBorderMap(HashMap<String, Border> borderMap) {
+		this.borderMap = borderMap;
+	}
+	
+	/*
+	 * Border functions
+	 */
+	
+	public Border getBorder(String pos) {
+		return this.borderMap.get(pos);
+	}
+	
+	public void addBorder(Border border) {
+		this.borderMap.put(border.getPos(), border);
+	}
+	
+	public void removeBorder(String pos) {
+		this.borderMap.remove(pos);
 	}
 	
 }
