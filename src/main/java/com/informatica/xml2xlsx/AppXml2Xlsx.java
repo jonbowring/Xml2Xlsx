@@ -107,12 +107,29 @@ public class AppXml2Xlsx {
 					
 					// If it has the type element then save it 
 					if(format.hasAttribute("type")) {
-						style.setFormat(format.getAttribute("type"));
+						style.setFormatType(format.getAttribute("type"));
 					}
 					
 					// If it has the pattern element then save it 
 					if(format.hasAttribute("pattern")) {
-						style.setPattern(format.getAttribute("pattern"));
+						style.setFormatPattern(format.getAttribute("pattern"));
+					}
+					
+				}
+				
+				// If the style has a fill element
+				if(styleEl.getElementsByTagName("fill").getLength() > 0 ) {
+					
+					Element fill = (Element) styleEl.getElementsByTagName("fill").item(0);
+					
+					// If it has the colour element then save it 
+					if(fill.hasAttribute("colour")) {
+						style.setFillColour(fill.getAttribute("colour"));
+					}
+					
+					// If it has the pattern element then save it 
+					if(fill.hasAttribute("pattern")) {
+						style.setFillPattern(fill.getAttribute("pattern"));
 					}
 					
 				}
@@ -201,11 +218,11 @@ public class AppXml2Xlsx {
 						Style style = styleMap.get(cell.getAttribute("style"));
 						
 						// Apply the cell format if set
-						String format = style.getFormat();
-						if(format.length() > 0) {
+						String formatType = style.getFormatType();
+						if(formatType.length() > 0) {
 							
 							// Apply the cell data types
-							switch(format) {
+							switch(formatType) {
 								case "formula":
 									xlCell.setCellFormula(cellValue);
 									break;
@@ -224,7 +241,7 @@ public class AppXml2Xlsx {
 									SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 									Date cellDate = fmt.parse(cellValue);
 									xlCell.setCellValue(cellDate);
-									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(style.getPattern()));
+									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(style.getFormatPattern()));
 									break;
 								default:
 									xlCell.setCellValue(cellValue);
@@ -351,7 +368,19 @@ public class AppXml2Xlsx {
 						// Apply the cell wrapping
 						cellStyle.setWrapText(style.getWrap());
 						
-					}
+						// Apply the fill colour if set
+						String fillColour = style.getFillColour();
+						if(fillColour.length() > 0) {
+							cellStyle.setFillBackgroundColor(styleHelper.getColours().get(fillColour).getIndex());
+						}
+						
+						// Apply the fill colour if set
+						String fillPattern = style.getFillPattern();
+						if(fillPattern.length() > 0) {
+							cellStyle.setFillPattern(styleHelper.getFillPatterns().get(fillPattern));
+						}
+						
+					} // End if has style
 					else {
 						xlCell.setCellValue(cellValue);
 					}
