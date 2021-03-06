@@ -2,6 +2,10 @@ package com.informatica.xml2xlsx;
 
 import java.util.HashMap;
 
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 public class Style {
 	
 	/*
@@ -11,12 +15,13 @@ public class Style {
 	private String name, valign, halign, formatType, formatPattern, fillColour, fillPattern;
 	private Boolean wrap;
 	private HashMap<String, Border> borderMap;
+	private Font font;
 	
 	/*
 	 * Constructors
 	 */
 	
-	public Style(String name) {
+	public Style(String name, XSSFWorkbook workbook) {
 		this.name = name;
 		this.valign = "";
 		this.halign = "";
@@ -26,6 +31,7 @@ public class Style {
 		this.fillPattern = "";
 		this.wrap = false;
 		this.borderMap = new HashMap<String, Border>();
+		this.font = workbook.createFont();
 	}
 	
 	/*
@@ -68,6 +74,10 @@ public class Style {
 		return this.borderMap;
 	}
 	
+	public Font getFont() {
+		return this.font;
+	}
+	
 	/*
 	 * Setters
 	 */
@@ -106,6 +116,12 @@ public class Style {
 	
 	public void setBorderMap(HashMap<String, Border> borderMap) {
 		this.borderMap = borderMap;
+	}
+	
+	public void setFont(Font font) {
+		this.font.setItalic(false);
+		this.font.setStrikeout(false);
+		this.font = font;
 	}
 	
 	/*
