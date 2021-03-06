@@ -18,6 +18,12 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFCellStyle;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -63,7 +69,7 @@ public class AppXml2Xlsx {
 		dbf.setNamespaceAware(true);
 		
 		// Initialise the target Excel workbook
-		Workbook xlWorkbook = new XSSFWorkbook();
+		XSSFWorkbook xlWorkbook = new XSSFWorkbook();
 		CreationHelper xlHelper = xlWorkbook.getCreationHelper();
 		
 		// Get the workbook node
@@ -127,9 +133,13 @@ public class AppXml2Xlsx {
 						style.setFillColour(fill.getAttribute("colour"));
 					}
 					
-					// If it has the pattern element then save it 
-					if(fill.hasAttribute("pattern")) {
+					// If it has the colour and pattern defined then save it 
+					if(fill.hasAttribute("colour") && fill.hasAttribute("pattern")) {
 						style.setFillPattern(fill.getAttribute("pattern"));
+					}
+					// Else if it has the the colour but no pattern then use a default pattern
+					else if(fill.hasAttribute("colour") && !fill.hasAttribute("pattern")) {
+						style.setFillPattern("solid-foreground");
 					}
 					
 				}
@@ -187,7 +197,7 @@ public class AppXml2Xlsx {
 			System.out.println("Adding worksheet '" + sheetName + "'...");
 			
 			// Initialise the target Excel worksheet
-			Sheet xlSheet = xlWorkbook.createSheet(sheetName);
+			XSSFSheet xlSheet = xlWorkbook.createSheet(sheetName);
 			
 			// Get all rows in the current worksheet and loop through them
 			NodeList rows = worksheet.getElementsByTagName("row");
@@ -197,7 +207,7 @@ public class AppXml2Xlsx {
 				Element row = (Element) rows.item(r);
 				
 				// Initialise the target row
-				Row xlRow = xlSheet.createRow(r);
+				XSSFRow xlRow = xlSheet.createRow(r);
 				
 				// Get all cells in the current row and loop through them
 				NodeList cells = row.getElementsByTagName("cell");
@@ -208,8 +218,8 @@ public class AppXml2Xlsx {
 					String cellValue = cell.getTextContent();
 					
 					// Initialise the target Excel cell and add the value
-					Cell xlCell = xlRow.createCell(c);
-					CellStyle cellStyle = xlWorkbook.createCellStyle();
+					XSSFCell xlCell = xlRow.createCell(c);
+					XSSFCellStyle cellStyle = xlWorkbook.createCellStyle();
 					
 					// If a cell style has been applied then add it to the cell
 					if(cell.hasAttribute("style")) {
@@ -254,6 +264,7 @@ public class AppXml2Xlsx {
 						}
 						
 						// Apply the vertical alignment if set
+						// TODO use a proper mapping for the alignment
 						String valign = style.getVAlign();
 						if(valign.length() > 0) {
 							
@@ -274,6 +285,7 @@ public class AppXml2Xlsx {
 						}
 						
 						// Apply the horizontal alignment if set
+						// TODO use a proper mapping for the alignment
 						String halign = style.getHAlign();
 						if(halign.length() > 0) {
 							
@@ -305,7 +317,14 @@ public class AppXml2Xlsx {
 							
 							// Apply the colour if set
 							IndexedColors borderColour = styleHelper.getColours().get(borderTop.getColour());
-							if(borderColour != null) {
+							
+							// If an rgb colour has been specified then use that
+							if(borderTop.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+								
+								String[] rgb = borderTop.getColour().substring(4, borderTop.getColour().length() - 1).split("\s*,\s*");
+								cellStyle.setTopBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+							}
+							else if(borderColour != null) {
 								cellStyle.setTopBorderColor(borderColour.getIndex());
 							}
 							
@@ -323,7 +342,14 @@ public class AppXml2Xlsx {
 							
 							// Apply the colour if set
 							IndexedColors borderColour = styleHelper.getColours().get(borderRight.getColour());
-							if(borderColour != null) {
+							
+							// If an rgb colour has been specified then use that
+							if(borderRight.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+								
+								String[] rgb = borderRight.getColour().substring(4, borderRight.getColour().length() - 1).split("\s*,\s*");
+								cellStyle.setRightBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+							}
+							else if(borderColour != null) {
 								cellStyle.setRightBorderColor(borderColour.getIndex());
 							}
 							
@@ -341,7 +367,14 @@ public class AppXml2Xlsx {
 							
 							// Apply the colour if set
 							IndexedColors borderColour = styleHelper.getColours().get(borderBottom.getColour());
-							if(borderColour != null) {
+							
+							// If an rgb colour has been specified then use that
+							if(borderBottom.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+								
+								String[] rgb = borderBottom.getColour().substring(4, borderBottom.getColour().length() - 1).split("\s*,\s*");
+								cellStyle.setBottomBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+							}
+							else if(borderColour != null) {
 								cellStyle.setBottomBorderColor(borderColour.getIndex());
 							}
 							
@@ -359,7 +392,14 @@ public class AppXml2Xlsx {
 							
 							// Apply the colour if set
 							IndexedColors borderColour = styleHelper.getColours().get(borderLeft.getColour());
-							if(borderColour != null) {
+							
+							// If an rgb colour has been specified then use that
+							if(borderLeft.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+								
+								String[] rgb = borderLeft.getColour().substring(4, borderLeft.getColour().length() - 1).split("\s*,\s*");
+								cellStyle.setLeftBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+							}
+							else if(borderColour != null) {
 								cellStyle.setLeftBorderColor(borderColour.getIndex());
 							}
 							
@@ -371,10 +411,21 @@ public class AppXml2Xlsx {
 						// Apply the fill colour if set
 						String fillColour = style.getFillColour();
 						if(fillColour.length() > 0) {
-							cellStyle.setFillBackgroundColor(styleHelper.getColours().get(fillColour).getIndex());
+							
+							// If an rgb colour has been specified then use that
+							if(fillColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+								
+								String[] rgb = fillColour.substring(4, fillColour.length() - 1).split("\s*,\s*");
+								cellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+							}
+							else {
+								cellStyle.setFillForegroundColor(styleHelper.getColours().get(fillColour).getIndex());
+							}
+							
 						}
 						
-						// Apply the fill colour if set
+						
+						// Apply the fill pattern if set
 						String fillPattern = style.getFillPattern();
 						if(fillPattern.length() > 0) {
 							cellStyle.setFillPattern(styleHelper.getFillPatterns().get(fillPattern));
