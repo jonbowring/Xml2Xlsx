@@ -14,6 +14,7 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -87,7 +88,7 @@ public class AppXml2Xlsx {
 				
 				// Initialise the style object
 				Element styleEl = (Element) styles.item(y);
-				Style style = new Style(styleEl.getAttribute("name"));
+				Style style = new Style(styleEl.getAttribute("name"), xlWorkbook);
 				
 				// If the style has an attribute element
 				if(styleEl.getElementsByTagName("align").getLength() > 0 ) {
@@ -178,9 +179,46 @@ public class AppXml2Xlsx {
 					
 				}
 				
+				// Add the font styles if set
+				Element fontEl = (Element) styleEl.getElementsByTagName("font").item(0);
+				if(fontEl != null) {
+					
+					// Initialise the font
+					Font font = xlWorkbook.createFont();
+					
+					// Get the font settings
+					String fontName = fontEl.getAttribute("name");
+					Element fontSize = (Element) fontEl.getElementsByTagName("size").item(0);
+					Element fontItalic = (Element) fontEl.getElementsByTagName("italic").item(0);
+					Element fontStrike = (Element) fontEl.getElementsByTagName("strikeout").item(0);
+					
+					// Set the font name if set
+					if(fontName.length() > 0) {
+						font.setFontName(fontName);
+					}
+					
+					// Set the font size if set
+					if(fontSize != null) {
+						font.setFontHeightInPoints(Short.parseShort(fontSize.getTextContent()));
+					}
+					
+					// Set the font italic if set
+					if(fontItalic != null) {
+						font.setItalic(true);
+					}
+					
+					// Set the font strikeout if set
+					if(fontStrike != null) {
+						font.setStrikeout(true);
+					}
+					
+					// Save the font
+					style.setFont(font);
+					
+				}
+				
 				// Add the current style to the hash map
 				styleMap.put(styleEl.getAttribute("name"), style);
-				
 				
 			}
 		}
@@ -429,6 +467,12 @@ public class AppXml2Xlsx {
 						String fillPattern = style.getFillPattern();
 						if(fillPattern.length() > 0) {
 							cellStyle.setFillPattern(styleHelper.getFillPatterns().get(fillPattern));
+						}
+						
+						// Apply the font if set
+						Font font = style.getFont();
+						if(font != null) {
+							cellStyle.setFont(font);
 						}
 						
 					} // End if has style
