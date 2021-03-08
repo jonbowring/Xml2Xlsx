@@ -359,7 +359,7 @@ public class AppXml2Xlsx {
 							// If an rgb colour has been specified then use that
 							if(borderTop.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
 								
-								String[] rgb = borderTop.getColour().substring(4, borderTop.getColour().length() - 1).split("\s*,\s*");
+								String[] rgb = borderTop.getColour().substring(4, borderTop.getColour().length() - 1).split("\\s*,\\s*");
 								cellStyle.setTopBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
 							}
 							else if(borderColour != null) {
@@ -384,7 +384,7 @@ public class AppXml2Xlsx {
 							// If an rgb colour has been specified then use that
 							if(borderRight.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
 								
-								String[] rgb = borderRight.getColour().substring(4, borderRight.getColour().length() - 1).split("\s*,\s*");
+								String[] rgb = borderRight.getColour().substring(4, borderRight.getColour().length() - 1).split("\\s*,\\s*");
 								cellStyle.setRightBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
 							}
 							else if(borderColour != null) {
@@ -409,7 +409,7 @@ public class AppXml2Xlsx {
 							// If an rgb colour has been specified then use that
 							if(borderBottom.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
 								
-								String[] rgb = borderBottom.getColour().substring(4, borderBottom.getColour().length() - 1).split("\s*,\s*");
+								String[] rgb = borderBottom.getColour().substring(4, borderBottom.getColour().length() - 1).split("\\s*,\\s*");
 								cellStyle.setBottomBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
 							}
 							else if(borderColour != null) {
@@ -434,7 +434,7 @@ public class AppXml2Xlsx {
 							// If an rgb colour has been specified then use that
 							if(borderLeft.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
 								
-								String[] rgb = borderLeft.getColour().substring(4, borderLeft.getColour().length() - 1).split("\s*,\s*");
+								String[] rgb = borderLeft.getColour().substring(4, borderLeft.getColour().length() - 1).split("\\s*,\\s*");
 								cellStyle.setLeftBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
 							}
 							else if(borderColour != null) {
@@ -453,7 +453,7 @@ public class AppXml2Xlsx {
 							// If an rgb colour has been specified then use that
 							if(fillColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
 								
-								String[] rgb = fillColour.substring(4, fillColour.length() - 1).split("\s*,\s*");
+								String[] rgb = fillColour.substring(4, fillColour.length() - 1).split("\\s*,\\s*");
 								cellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
 							}
 							else {
