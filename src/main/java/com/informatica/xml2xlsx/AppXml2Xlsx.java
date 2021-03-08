@@ -470,9 +470,8 @@ public class AppXml2Xlsx {
 						}
 						
 						// Apply the font if set
-						Font font = style.getFont();
-						if(font != null) {
-							cellStyle.setFont(font);
+						if(style.getFont() != null) {
+							cellStyle.setFont(style.getFont());
 						}
 						
 					} // End if has style
