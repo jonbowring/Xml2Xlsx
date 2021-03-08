@@ -10,8 +10,8 @@
 	<name>Xml2Xlsx</name>
 	<description>An executable jar for converting simple XML files into XLSX spreadsheet files.</description>
 	<properties>
-		<maven.compiler.source>15</maven.compiler.source>
-		<maven.compiler.target>15</maven.compiler.target>
+		<maven.compiler.source>8</maven.compiler.source>
+		<maven.compiler.target>8</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<dependency>
