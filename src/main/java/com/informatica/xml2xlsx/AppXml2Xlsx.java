@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -14,11 +15,17 @@ import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataValidation;
+import org.apache.poi.ss.usermodel.DataValidationConstraint;
+import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -30,6 +37,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import java.util.HashMap;
+import java.util.List;
 
 public class AppXml2Xlsx {
 
@@ -42,6 +50,7 @@ public class AppXml2Xlsx {
 		String src = "", 
 				tgt = "";
 		HashMap<String, Style> styleMap = new HashMap<String, Style>();
+		HashMap<String, Validation> validationMap = new HashMap<String, Validation>();
 		StyleHelper styleHelper = new StyleHelper();
 		
 		// Parse the command line arguments
@@ -74,8 +83,8 @@ public class AppXml2Xlsx {
 		CreationHelper xlHelper = xlWorkbook.getCreationHelper();
 		
 		// Get the workbook node
-		Element workbook = (Element) xpath.evaluate("/workbook", doc, XPathConstants.NODE);
 		System.out.println("Initialising workbook...");
+		Element workbook = (Element) xpath.evaluate("/workbook", doc, XPathConstants.NODE);
 		
 		// Parse the styles
 		NodeList styles = (NodeList) xpath.evaluate("/workbook/styles/style", doc, XPathConstants.NODESET);
@@ -221,6 +230,52 @@ public class AppXml2Xlsx {
 				styleMap.put(styleEl.getAttribute("name"), style);
 				
 			}
+		} // End of if styles.getLength() > 0
+		
+		// Parse the styles
+		NodeList validations = (NodeList) xpath.evaluate("/workbook/validations/validation", doc, XPathConstants.NODESET);
+		
+		// If a validations array has been included
+		if(validations.getLength() > 0) {
+			
+			// Loop through the validations and create the validation objects
+			for(int v = 0; v < validations.getLength(); v++) {
+				
+				// Initialise the validation object
+				Element validationEl = (Element) validations.item(v);
+				String validationType = validationEl.getElementsByTagName("type").item(0).getTextContent();
+				Validation validation = new Validation(validationEl.getAttribute("name"), validationType);
+				
+				// TODO get and set the formula
+				
+				// If set get the list of validation values
+				Element valuesArrEl = (Element) validationEl.getElementsByTagName("values").item(0);
+				if(valuesArrEl != null) {
+					
+					NodeList valuesEl = valuesArrEl.getElementsByTagName("value");
+					
+					if(valuesEl.getLength() > 0) {
+						List<String> valuesList = new ArrayList<String>();
+						for(int a = 0; a < valuesEl.getLength(); a++) {
+							
+							Element valueEl = (Element) valuesEl.item(a);
+							valuesList.add(valueEl.getTextContent());
+							
+						}
+						
+						// Save the list of values to the validation
+						validation.setValues(valuesList.toArray(new String[valuesEl.getLength()]));
+					}
+					
+				}
+				
+				
+				
+				
+				// Save the validation to the map
+				validationMap.put(validation.getName(), validation);
+			}
+			
 		}
 		
 		
@@ -234,8 +289,9 @@ public class AppXml2Xlsx {
 			String sheetName = worksheet.getAttribute("name");
 			System.out.println("Adding worksheet '" + sheetName + "'...");
 			
-			// Initialise the target Excel worksheet
+			// Initialise the target Excel worksheet and data validation helper
 			XSSFSheet xlSheet = xlWorkbook.createSheet(sheetName);
+			DataValidationHelper dvHelper = xlSheet.getDataValidationHelper();
 			
 			// Get all rows in the current worksheet and loop through them
 			NodeList rows = worksheet.getElementsByTagName("row");
@@ -302,7 +358,6 @@ public class AppXml2Xlsx {
 						}
 						
 						// Apply the vertical alignment if set
-						// TODO use a proper mapping for the alignment
 						String valign = style.getVAlign();
 						if(valign.length() > 0) {
 							
@@ -323,7 +378,6 @@ public class AppXml2Xlsx {
 						}
 						
 						// Apply the horizontal alignment if set
-						// TODO use a proper mapping for the alignment
 						String halign = style.getHAlign();
 						if(halign.length() > 0) {
 							
@@ -481,6 +535,37 @@ public class AppXml2Xlsx {
 					
 					// Save the style to the cell
 					xlCell.setCellStyle(cellStyle);
+					
+					// If a validation is set for the cell then apply the validation
+					if(cell.hasAttribute("validation")) {
+						
+						Validation validation = validationMap.get(cell.getAttribute("validation"));
+						if(validation != null) {
+							CellAddress cellAddress = xlCell.getAddress();
+							CellRangeAddressList rangeAddress = new CellRangeAddressList( cellAddress.getRow(), cellAddress.getRow(), cellAddress.getColumn(), cellAddress.getColumn() );
+							
+							// If the type of validation is for a list of values
+							if(validation.getType().equals("list")) {
+								
+								// Get the values
+								String[] values = validation.getValues();
+								
+								// Add the validation if the values list is not empty
+								if(values.length > 0) {
+									DataValidationConstraint dvConstraint = dvHelper.createExplicitListConstraint(values);
+									DataValidation dvValidation = dvHelper.createValidation(dvConstraint, rangeAddress);
+									dvValidation.setSuppressDropDownArrow(true);
+									dvValidation.setShowErrorBox(true);
+									xlSheet.addValidationData(dvValidation);
+								}
+							}
+							
+							// TODO Add formula validation
+						}
+						
+						
+						
+					}
 					
 				}
 				
