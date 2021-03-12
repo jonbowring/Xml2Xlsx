@@ -23,9 +23,11 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
@@ -36,6 +38,8 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
 import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFTable;
+import org.apache.poi.xssf.usermodel.XSSFTableStyleInfo;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -289,7 +293,6 @@ public class AppXml2Xlsx {
 		
 		// Get all worksheets in the workbook and loop trhough them
 		NodeList worksheets = (NodeList) xpath.evaluate("/workbook/worksheet", doc, XPathConstants.NODESET);
-		//NodeList worksheets = workbook.getElementsByTagName("worksheet");
 		for(int s = 0; s < worksheets.getLength(); s++) {
 			
 			// Get the current worksheet
@@ -303,7 +306,13 @@ public class AppXml2Xlsx {
 			
 			// Get all rows in the current worksheet and loop through them
 			NodeList rows = worksheet.getElementsByTagName("row");
+			int maxR = 0, maxC = 0;
 			for(int r = 0; r < rows.getLength(); r++) {
+				
+				// Update the max row count
+				if(r > maxR) {
+					maxR = r;
+				}
 				
 				// Get the current row
 				Element row = (Element) rows.item(r);
@@ -314,6 +323,11 @@ public class AppXml2Xlsx {
 				// Get all cells in the current row and loop through them
 				NodeList cells = row.getElementsByTagName("cell");
 				for(int c = 0; c < cells.getLength(); c++) {
+					
+					// Update the max col count
+					if(c > maxC) {
+						maxC = c;
+					}
 					
 					// Get the current cell
 					Element cell = (Element) cells.item(c);
@@ -597,6 +611,69 @@ public class AppXml2Xlsx {
 							
 						}
 						
+					}
+					
+				}
+				
+			}
+			
+			// If a table has been defined then apply it to the sheet
+			Element table = (Element) worksheet.getElementsByTagName("table").item(0);
+			if(table != null) {
+				
+				// Set the area of the table using the max row and max col counts
+				AreaReference tableArea = xlWorkbook.getCreationHelper().createAreaReference(
+						new CellReference(0, 0), new CellReference(maxR, maxC));
+				XSSFTable xlTable = xlSheet.createTable(tableArea);
+				xlTable.getCTTable().addNewAutoFilter().setRef(tableArea.formatAsString());
+				
+				if(table.hasAttribute("name")) {
+					xlTable.setName(table.getAttribute("name"));
+					xlTable.setDisplayName(table.getAttribute("name"));
+				}
+				
+				if(table.hasAttribute("style")) {
+					xlTable.getCTTable().addNewTableStyleInfo();
+					xlTable.getCTTable().getTableStyleInfo().setName(table.getAttribute("style"));
+					XSSFTableStyleInfo tableStyle = (XSSFTableStyleInfo) xlTable.getStyle();
+					tableStyle.setFirstColumn(false);
+					tableStyle.setLastColumn(false);
+					
+					if(table.hasAttribute("colStripes")) {
+						
+						if(table.getAttribute("colStripes").equals("true")) {
+							tableStyle.setShowColumnStripes(true);
+						}
+						else {
+							tableStyle.setShowColumnStripes(false);
+						}
+						
+					}
+					
+					if(table.hasAttribute("rowStripes")) {
+						
+						if(table.getAttribute("rowStripes").equals("true")) {
+							tableStyle.setShowRowStripes(true);
+						}
+						else {
+							tableStyle.setShowRowStripes(false);
+						}
+						
+					}
+				}
+				
+			}
+			
+			// Apply the auto filter if set and no table is defined
+			if(worksheet.hasAttribute("autofilter")) {
+				
+				if(worksheet.getAttribute("autofilter").equals("true")) {
+					
+					if(worksheet.getElementsByTagName("table").getLength() > 0) {
+						System.out.println("Skipping worksheet autofilter. Worksheet has a table with autofilters already enabled.");
+					}
+					else {
+						xlSheet.setAutoFilter(new CellRangeAddress(0, 0, 0, maxC));
 					}
 					
 				}
