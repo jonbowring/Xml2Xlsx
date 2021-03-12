@@ -30,6 +30,10 @@ import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFDataValidation;
+import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
+import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
+import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -246,7 +250,11 @@ public class AppXml2Xlsx {
 				String validationType = validationEl.getElementsByTagName("type").item(0).getTextContent();
 				Validation validation = new Validation(validationEl.getAttribute("name"), validationType);
 				
-				// TODO get and set the formula
+				// If set get and set the formula
+				Element formulaEl = (Element) validationEl.getElementsByTagName("formula").item(0);
+				if(formulaEl != null) {
+					validation.setFormula(formulaEl.getTextContent());
+				}
 				
 				// If set get the list of validation values
 				Element valuesArrEl = (Element) validationEl.getElementsByTagName("values").item(0);
@@ -291,7 +299,7 @@ public class AppXml2Xlsx {
 			
 			// Initialise the target Excel worksheet and data validation helper
 			XSSFSheet xlSheet = xlWorkbook.createSheet(sheetName);
-			DataValidationHelper dvHelper = xlSheet.getDataValidationHelper();
+			XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(xlSheet);
 			
 			// Get all rows in the current worksheet and loop through them
 			NodeList rows = worksheet.getElementsByTagName("row");
@@ -543,27 +551,51 @@ public class AppXml2Xlsx {
 						if(validation != null) {
 							CellAddress cellAddress = xlCell.getAddress();
 							CellRangeAddressList rangeAddress = new CellRangeAddressList( cellAddress.getRow(), cellAddress.getRow(), cellAddress.getColumn(), cellAddress.getColumn() );
+							XSSFDataValidation dvValidation = null;
 							
-							// If the type of validation is for a list of values
-							if(validation.getType().equals("list")) {
+							
+							// If the type of validation is for a fixed list of values
+							if(validation.getType().equals("fixed-list")) {
 								
 								// Get the values
 								String[] values = validation.getValues();
 								
 								// Add the validation if the values list is not empty
 								if(values.length > 0) {
-									DataValidationConstraint dvConstraint = dvHelper.createExplicitListConstraint(values);
-									DataValidation dvValidation = dvHelper.createValidation(dvConstraint, rangeAddress);
-									dvValidation.setSuppressDropDownArrow(true);
-									dvValidation.setShowErrorBox(true);
-									xlSheet.addValidationData(dvValidation);
+									
+									// Build the validation
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createExplicitListConstraint(values);
+									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
 								}
 							}
+							// Else if the type uses a formula to apply the list
+							else if(validation.getType().equals("formula-list")) {
+								
+								// Get the formula
+								String formula = validation.getFormula();
+								
+								// If a formula has been defined
+								if(formula.length() > 0) {
+									
+									// Convert the formula to a named range
+									XSSFName rangeName = xlWorkbook.createName();
+									rangeName.setNameName(validation.getName());
+									rangeName.setRefersToFormula(formula);
+									
+									// Build the validation
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint(validation.getName());
+									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
+									
+								}
+								
+							}
 							
-							// TODO Add formula validation
+							// Apply the validation to the sheet
+							dvValidation.setSuppressDropDownArrow(true);
+							dvValidation.setShowErrorBox(true);
+							xlSheet.addValidationData(dvValidation);
+							
 						}
-						
-						
 						
 					}
 					
