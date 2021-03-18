@@ -197,7 +197,8 @@ public class AppXml2Xlsx {
 					
 					// Get the font settings
 					String fontName = fontEl.getAttribute("name");
-					Element fontSize = (Element) fontEl.getElementsByTagName("size").item(0);
+					String fontSize = fontEl.getAttribute("size");
+					String fontColour = fontEl.getAttribute("colour");
 					Element fontItalic = (Element) fontEl.getElementsByTagName("italic").item(0);
 					Element fontStrike = (Element) fontEl.getElementsByTagName("strikeout").item(0);
 					
@@ -207,8 +208,13 @@ public class AppXml2Xlsx {
 					}
 					
 					// Set the font size if set
-					if(fontSize != null) {
-						font.setFontHeightInPoints(Short.parseShort(fontSize.getTextContent()));
+					if(fontSize.length() > 0) {
+						font.setFontHeightInPoints(Short.parseShort(fontSize));
+					}
+					
+					// Set the font colour if set
+					if(fontColour.length() > 0) {
+						font.setColor(styleHelper.getColours().get(fontColour).getIndex()); 
 					}
 					
 					// Set the font italic if set
