@@ -12,7 +12,6 @@ import java.util.Date;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.AreaReference;
@@ -27,6 +26,7 @@ import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
+import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -67,7 +67,7 @@ public class AppXml2Xlsx {
 				default:
 					break;
 			}
-		}
+		} // end args loop
 		
 		// Parse the source XML file
 		System.out.println("Reading XML source file '" + src + "'...");
@@ -84,7 +84,12 @@ public class AppXml2Xlsx {
 		
 		// Get the workbook node
 		System.out.println("Initialising workbook...");
-		Element workbook = (Element) xpath.evaluate("/workbook", doc, XPathConstants.NODE);
+		
+		/*
+		 * ============================================
+		 * Initialise the styles
+		 * ============================================
+		 */
 		
 		// Parse the styles
 		NodeList styles = (NodeList) xpath.evaluate("/workbook/styles/style", doc, XPathConstants.NODESET);
@@ -114,7 +119,7 @@ public class AppXml2Xlsx {
 						style.setHAlign(align.getAttribute("horizontal"));
 					}
 					
-				}
+				} // End of if style has align element
 				
 				// If the style has a format element
 				if(styleEl.getElementsByTagName("format").getLength() > 0 ) {
@@ -131,7 +136,7 @@ public class AppXml2Xlsx {
 						style.setFormatPattern(format.getAttribute("pattern"));
 					}
 					
-				}
+				} // End if style has format element
 				
 				// If the style has a fill element
 				if(styleEl.getElementsByTagName("fill").getLength() > 0 ) {
@@ -152,7 +157,7 @@ public class AppXml2Xlsx {
 						style.setFillPattern("solid-foreground");
 					}
 					
-				}
+				} // End if style has fill element
 				
 				// If the style has a wrap element then set wrap to true
 				if(styleEl.getElementsByTagName("wrap").getLength() > 0 ) {
@@ -184,16 +189,17 @@ public class AppXml2Xlsx {
 						
 						// Add the border to the style
 						style.addBorder(border);
-					}
+						
+					} // End of borders loop
 					
-				}
+				} // End if borders length > 0
 				
 				// Add the font styles if set
 				Element fontEl = (Element) styleEl.getElementsByTagName("font").item(0);
 				if(fontEl != null) {
 					
 					// Initialise the font
-					Font font = xlWorkbook.createFont();
+					XSSFFont font = xlWorkbook.createFont();
 					
 					// Get the font settings
 					String fontName = fontEl.getAttribute("name");
@@ -214,7 +220,18 @@ public class AppXml2Xlsx {
 					
 					// Set the font colour if set
 					if(fontColour.length() > 0) {
-						font.setColor(styleHelper.getColours().get(fontColour).getIndex()); 
+						
+						// If an rgb colour has been specified then use that
+						if(fontColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+							String[] rgb = fontColour.substring(4, fontColour.length() - 1).split("\\s*,\\s*");
+							font.setColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+						}
+						
+						// Else lookup the colour index
+						else {
+							font.setColor(styleHelper.getColours().get(fontColour).getIndex()); 
+						}
+						
 					}
 					
 					// Set the font italic if set
@@ -230,16 +247,24 @@ public class AppXml2Xlsx {
 					// Save the font
 					style.setFont(font);
 					
-				}
+				} // End if has font element
 				
 				// Add the current style to the hash map
 				styleMap.put(styleEl.getAttribute("name"), style);
 				
-			}
+			} // End of styles loop
+			
 		} // End of if styles.getLength() > 0
 		
 		// Parse the styles
 		NodeList validations = (NodeList) xpath.evaluate("/workbook/validations/validation", doc, XPathConstants.NODESET);
+		
+		
+		/*
+		 * ============================================
+		 * Initialise the validations
+		 * ============================================
+		 */
 		
 		// If a validations array has been included
 		if(validations.getLength() > 0) {
@@ -275,18 +300,23 @@ public class AppXml2Xlsx {
 						
 						// Save the list of values to the validation
 						validation.setValues(valuesList.toArray(new String[valuesEl.getLength()]));
-					}
+						
+					} // End if values length > 0
 					
-				}
-				
-				
-				
+				} // End if values array is not null
 				
 				// Save the validation to the map
 				validationMap.put(validation.getName(), validation);
-			}
+				
+			} // End validations loop
 			
-		}
+		} // End if validations length > 0
+		
+		/*
+		 * ============================================
+		 * Process the workbook data
+		 * ============================================
+		 */
 		
 		
 		// Get all worksheets in the workbook and loop trhough them
@@ -335,11 +365,17 @@ public class AppXml2Xlsx {
 					XSSFCell xlCell = xlRow.createCell(c);
 					XSSFCellStyle cellStyle = xlWorkbook.createCellStyle();
 					
+					
 					// If a cell style has been applied then add it to the cell
 					if(cell.hasAttribute("style")) {
 						
 						// Get the style settings
 						Style style = styleMap.get(cell.getAttribute("style"));
+						
+						/*
+						 * Manage the cell data type
+						 * --------------------------------------------
+						 */
 						
 						// Apply the cell format if set
 						String formatType = style.getFormatType();
@@ -370,12 +406,17 @@ public class AppXml2Xlsx {
 								default:
 									xlCell.setCellValue(cellValue);
 									break;
-							}
+							} // End data type switch
 							
-						}
+						} // End if cell has format
 						else {
 							xlCell.setCellValue(cellValue);
 						}
+						
+						/*
+						 * Manage the cell alignments
+						 * --------------------------------------------
+						 */
 						
 						// Apply the vertical alignment if set
 						String valign = style.getVAlign();
@@ -393,9 +434,10 @@ public class AppXml2Xlsx {
 									break;
 								default:
 									break;
-							}
+									
+							} // End valign switch
 							
-						}
+						} // End if has valign
 						
 						// Apply the horizontal alignment if set
 						String halign = style.getHAlign();
@@ -413,9 +455,15 @@ public class AppXml2Xlsx {
 									break;
 								default:
 									break;
-							}
+									
+							} // End halign switch
 							
-						}
+						} // End if has halign
+						
+						/*
+						 * Manage the cell borders
+						 * --------------------------------------------
+						 */
 						
 						// Apply the top border if set
 						Border borderTop = style.getBorder("top");
@@ -440,7 +488,7 @@ public class AppXml2Xlsx {
 								cellStyle.setTopBorderColor(borderColour.getIndex());
 							}
 							
-						}
+						} // End if has borderTop
 						
 						// Apply the right border if set
 						Border borderRight = style.getBorder("right");
@@ -465,7 +513,7 @@ public class AppXml2Xlsx {
 								cellStyle.setRightBorderColor(borderColour.getIndex());
 							}
 							
-						}
+						} // End if has borderRight
 						
 						// Apply the bottom border if set
 						Border borderBottom = style.getBorder("bottom");
@@ -490,7 +538,7 @@ public class AppXml2Xlsx {
 								cellStyle.setBottomBorderColor(borderColour.getIndex());
 							}
 							
-						}
+						} // End if has border bottom
 						
 						// Apply the left border if set
 						Border borderLeft = style.getBorder("left");
@@ -515,7 +563,12 @@ public class AppXml2Xlsx {
 								cellStyle.setLeftBorderColor(borderColour.getIndex());
 							}
 							
-						}
+						} // End if has border left
+						
+						/*
+						 * Manage the wrap and fill
+						 * --------------------------------------------
+						 */
 						
 						// Apply the cell wrapping
 						cellStyle.setWrapText(style.getWrap());
@@ -534,7 +587,7 @@ public class AppXml2Xlsx {
 								cellStyle.setFillForegroundColor(styleHelper.getColours().get(fillColour).getIndex());
 							}
 							
-						}
+						} // End if has fill colour
 						
 						
 						// Apply the fill pattern if set
@@ -551,10 +604,16 @@ public class AppXml2Xlsx {
 					} // End if has style
 					else {
 						xlCell.setCellValue(cellValue);
-					}
+						
+					} // End else has style
 					
 					// Save the style to the cell
 					xlCell.setCellStyle(cellStyle);
+					
+					/*
+					 * Manage the cell validations
+					 * --------------------------------------------
+					 */
 					
 					// If a validation is set for the cell then apply the validation
 					if(cell.hasAttribute("validation")) {
@@ -579,7 +638,9 @@ public class AppXml2Xlsx {
 									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createExplicitListConstraint(values);
 									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
 								}
-							}
+								
+							} // End if fixed-list
+							
 							// Else if the type uses a formula to apply the list
 							else if(validation.getType().equals("formula-list")) {
 								
@@ -600,20 +661,25 @@ public class AppXml2Xlsx {
 									
 								}
 								
-							}
+							} // End if formula list
 							
 							// Apply the validation to the sheet
 							dvValidation.setSuppressDropDownArrow(true);
 							dvValidation.setShowErrorBox(true);
 							xlSheet.addValidationData(dvValidation);
 							
-						}
+						} // End if validation is not null
 						
-					}
+					} // End if cell has validation
 					
-				}
+				} // End of cells loop
 				
-			}
+			} // End of rows loop
+			
+			/*
+			 * Manage the worksheet table
+			 * --------------------------------------------
+			 */
 			
 			// If a table has been defined then apply it to the sheet
 			Element table = (Element) worksheet.getElementsByTagName("table").item(0);
@@ -658,9 +724,15 @@ public class AppXml2Xlsx {
 						}
 						
 					}
-				}
+					
+				} // End if table has style
 				
-			}
+			} // End if has table
+			
+			/*
+			 * Manage the worksheet autofilters
+			 * --------------------------------------------
+			 */
 			
 			// Apply the auto filter if set and no table is defined
 			if(worksheet.hasAttribute("autofilter")) {
@@ -676,9 +748,14 @@ public class AppXml2Xlsx {
 					
 				}
 				
-			}
+			} // End if has autofilter
 			
-		}
+		} // End of worksheets loop
+		
+		/*
+		 * Save the excel file
+		 * --------------------------------------------
+		 */
 			
 		// Save and close the target Excel file
 		try (OutputStream fileOut = new FileOutputStream(tgt)) {
@@ -688,6 +765,6 @@ public class AppXml2Xlsx {
 		    System.out.println("File saved!");
 		}
 
-	}
+	} // End main
 
 }
