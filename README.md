@@ -1,42 +1,26 @@
 # Xml2Xlsx
 
-## Usage
-java -jar Xml2Xlsx.jar --src [Source XML file] --tgt [Target Excel file]
+## Description:
+Xml2Xlsx is an executable jar that enables you to create Excel XLSX files using a simple XML markup. It provides the ability for managing multiple worksheets, formatting, styling, data validation and tables.
 
-## Example source XML file
+## Usage:
 ```
-<workbook>
-	<worksheet name="Books">
-		<row>
-			<cell type="string">Title</cell>
-			<cell type="string">Author</cell>
-			<cell type="string">Year</cell>
-			<cell type="string">Price</cell>
-		</row>
-		<row>
-			<cell type="formula">1+1</cell>
-			<cell type="string">Giada De Laurentiis</cell>
-			<cell type="date">2005-11-26</cell>
-			<cell type="float">30.00</cell>
-		</row>
-		<row>
-			<cell type="string">Harry Potter</cell>
-			<cell type="string">J K. Rowling</cell>
-			<cell type="int">2005</cell>
-			<cell type="float">29.99</cell>
-		</row>
-		<row>
-			<cell type="string">XQuery Kick Start</cell>
-			<cell type="string">James McGovern</cell>
-			<cell type="int">2003</cell>
-			<cell type="float">49.99</cell>
-		</row>
-		<row>
-			<cell type="string">Learning XML</cell>
-			<cell type="string">Erik T. Ray</cell>
-			<cell type="int">2003</cell>
-			<cell type="float">39.95</cell>
-		</row>
-	</worksheet>
-</workbook>
+java -jar Xml2Xlsx-[Version].jar --src [Source XML file] --tgt [Target Excel file]
 ```
+
+### Example Usage:
+```
+java -jar xml2xlsx-1.2.2.jar --src "books.xml" --tgt "books.xlsx"
+```
+
+## Command Line Options:
+Option|Description
+------|-----------
+--src|Used to specify the location of the input XML file.
+--tgt|Used to specify the location of the output Excel file.
+
+## XML Markup:
+TBC
+
+## Examples:
+TBC
