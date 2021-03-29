@@ -305,3 +305,52 @@ XPath|Description
 	</worksheet>
 </workbook>
 ```
+
+### Fonts:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example6.png?raw=true" alt="Fonts"/>
+
+```
+<workbook>
+	<styles>
+		<style name="myFont">
+			<font name="Courier New" size="24" colour="blue">
+				<italic/>
+				<strikeout/>
+			</font>
+		</style>
+	</styles>
+	<worksheet name="Books" autofilter="true">
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell style="myFont">Everyday Italian</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell>2005</cell>
+			<cell>30.00</cell>
+		</row>
+		<row>
+			<cell style="myFont">Harry Potter</cell>
+			<cell>J K. Rowling</cell>
+			<cell>2005</cell>
+			<cell>29.99</cell>
+		</row>
+		<row>
+			<cell style="myFont">XQuery Kick Start</cell>
+			<cell>Vaidyanathan Nagarajan</cell>
+			<cell>2003</cell>
+			<cell>49.99</cell>
+		</row>
+		<row>
+			<cell style="myFont">Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell>2003</cell>
+			<cell>39.95</cell>
+		</row>
+	</worksheet>
+</workbook>
+```
