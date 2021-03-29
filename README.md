@@ -455,3 +455,96 @@ XPath|Description
 	</worksheet>
 </workbook>
 ```
+
+### Mash up:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example9.png?raw=true" alt="Fonts"/>
+
+```
+<workbook>
+	<styles>
+		<style name="top_left">
+			<align horizontal="left" vertical="top"/>
+			<font name="Courier New" size="24" colour="blue">
+				<italic/>
+				<strikeout/>
+			</font>
+		</style>
+		<style name="bottom_right">
+			<align horizontal="right" vertical="bottom"/>
+			<wrap/>
+		</style>
+		<style name="center">
+			<align horizontal="center" vertical="center"/>
+			<border pos="top" type="slanted-dash-dot" colour="rgb(100,200,50)"/>
+			<border pos="right" type="dashed" colour="aqua"/>
+			<border pos="bottom" type="thick" colour="rgb(100,200,50)"/>
+			<border pos="left" type="double" colour="rgb(100,200,50)"/>
+			<font name="Courier New">
+				<size>50</size>
+			</font>
+		</style>
+		<style name="formula">
+			<format type="formula"/>
+		</style>
+		<style name="date">
+			<format type="date" pattern="dd/MM/yyyy"/>
+		</style>
+		<style name="float">
+			<format type="float"/>
+			<fill colour="aqua"/>
+		</style>
+		<style name="int">
+			<format type="int"/>
+			<fill colour="rgb(100,200,50)" pattern="squares"/>
+		</style>
+	</styles>
+	<validations>
+		<validation name="my_validation1">
+			<type>fixed-list</type>
+			<values>
+				<value>FOO</value>
+				<value>BAR</value>
+				<value>CAT</value>
+			</values>
+		</validation>
+		<validation name="my_validation2">
+			<type>formula-list</type>
+			<formula>'Books'!$B$2:$B$5</formula>
+		</validation>
+	</validations>
+	<worksheet name="Books" autofilter="false">
+		<table name="My_Table" colStripes="false" rowStripes="true" style="TableStyleMedium2"/>
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell style="formula"  validation="my_validation1">1+1</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell style="date">2005-11-26 00:00:01</cell>
+			<cell style="float">30.00</cell>
+		</row>
+		<row>
+			<cell style="bottom_right">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</cell>
+			<cell style="top_left">J K. Rowling</cell>
+			<cell style="int">2005</cell>
+			<cell style="float">29.99</cell>
+		</row>
+		<row>
+			<cell validation="my_validation1">XQuery Kick Start</cell>
+			<cell>James McGovern</cell>
+			<cell style="center">2003</cell>
+			<cell style="float">49.99</cell>
+		</row>
+		<row>
+			<cell validation="my_validation2">Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell style="int">2003</cell>
+			<cell style="float">39.95</cell>
+		</row>
+	</worksheet>
+</workbook>
+```
