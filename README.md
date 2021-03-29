@@ -117,7 +117,7 @@ XPath|Description
 
 ### A Simple Worksheet With Integer & Float Data Types:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example2.png?raw=true" alt="A Simple Table With Auto Filters"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example2.png?raw=true" alt="A Simple Worksheet With Integer & Float Data Types"/>
 
 ```
 <workbook>
@@ -159,6 +159,57 @@ XPath|Description
 				<cell>Erik T. Ray</cell>
 				<cell style="myInt">2003</cell>
 				<cell style="myFloat">39.95</cell>
+			</row>
+	</worksheet>
+</workbook>
+```
+
+### A Simple Worksheet With Formulas:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example3.png?raw=true" alt="A Simple Worksheet With Formulas"/>
+
+```
+<workbook>
+	<styles>
+		<style name="myFormula">
+			<format type="formula"/>
+		</style>
+	</styles>
+	<worksheet name="Books" autofilter="true">
+			<row>
+				<cell>Title</cell>
+				<cell>Author</cell>
+				<cell>Year</cell>
+				<cell>Price</cell>
+				<cell>Formula</cell>
+			</row>
+			<row>
+				<cell>Everyday Italian</cell>
+				<cell>Giada De Laurentiis</cell>
+				<cell>2005</cell>
+				<cell>30.00</cell>
+				<cell style="myFormula">A2&amp;" - "&amp;B2</cell>
+			</row>
+			<row>
+				<cell>Harry Potter</cell>
+				<cell>J K. Rowling</cell>
+				<cell>2005</cell>
+				<cell>29.99</cell>
+				<cell style="myFormula">C2 * D2</cell>
+			</row>
+			<row>
+				<cell>XQuery Kick Start</cell>
+				<cell>Vaidyanathan Nagarajan</cell>
+				<cell>2003</cell>
+				<cell>49.99</cell>
+				<cell style="myFormula">upper(A2)</cell>
+			</row>
+			<row>
+				<cell>Learning XML</cell>
+				<cell>Erik T. Ray</cell>
+				<cell>2003</cell>
+				<cell>39.95</cell>
+				<cell style="myFormula">lower(B2)</cell>
 			</row>
 	</worksheet>
 </workbook>
