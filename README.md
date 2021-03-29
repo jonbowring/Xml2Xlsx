@@ -115,9 +115,9 @@ XPath|Description
 </workbook>
 ```
 
-### A Simple Worksheet With Integer & Float Data Types:
+### Cell Data Types:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example2.png?raw=true" alt="A Simple Worksheet With Integer & Float Data Types"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example2.png?raw=true" alt="Cell Data Types"/>
 
 ```
 <workbook>
@@ -164,9 +164,9 @@ XPath|Description
 </workbook>
 ```
 
-### A Simple Worksheet With Formulas:
+### Formulas:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example3.png?raw=true" alt="A Simple Worksheet With Formulas"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example3.png?raw=true" alt="Formulas"/>
 
 ```
 <workbook>
@@ -215,9 +215,9 @@ XPath|Description
 </workbook>
 ```
 
-### A Simple Worksheet With A Table:
+### Basic Table:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example4.png?raw=true" alt="A Simple Worksheet With A Table"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example4.png?raw=true" alt="Basic Table"/>
 
 ```
 <workbook>
@@ -251,6 +251,55 @@ XPath|Description
 			<cell>Learning XML</cell>
 			<cell>Erik T. Ray</cell>
 			<cell>2003</cell>
+			<cell>39.95</cell>
+		</row>
+	</worksheet>
+</workbook>
+```
+
+### Cell Borders:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example5.png?raw=true" alt="Cell Borders"/>
+
+```
+<workbook>
+	<styles>
+		<style name="myBorders">
+			<border pos="top" type="medium-dashed" colour="red"/>
+			<border pos="right" type="medium-dashed" colour="red"/>
+			<border pos="bottom" type="medium-dashed" colour="red"/>
+			<border pos="left" type="medium-dashed" colour="red"/>
+		</style>
+	</styles>
+	<worksheet name="Books" autofilter="true">
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell>Everyday Italian</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell style="myBorders">2005</cell>
+			<cell>30.00</cell>
+		</row>
+		<row>
+			<cell>Harry Potter</cell>
+			<cell>J K. Rowling</cell>
+			<cell style="myBorders">2005</cell>
+			<cell>29.99</cell>
+		</row>
+		<row>
+			<cell>XQuery Kick Start</cell>
+			<cell>Vaidyanathan Nagarajan</cell>
+			<cell style="myBorders">2003</cell>
+			<cell>49.99</cell>
+		</row>
+		<row>
+			<cell>Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell style="myBorders">2003</cell>
 			<cell>39.95</cell>
 		</row>
 	</worksheet>
