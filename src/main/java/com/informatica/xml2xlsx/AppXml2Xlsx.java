@@ -657,12 +657,13 @@ public class AppXml2Xlsx {
 								if(formula.length() > 0) {
 									
 									// Convert the formula to a named range
-									XSSFName rangeName = xlWorkbook.createName();
-									rangeName.setNameName(validation.getName());
-									rangeName.setRefersToFormula(formula);
+									//XSSFName rangeName = xlWorkbook.createName();
+									//rangeName.setNameName(validation.getName());
+									//rangeName.setRefersToFormula(formula);
 									
 									// Build the validation
-									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint(validation.getName());
+									//XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint(validation.getName());
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint(formula);
 									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
 									
 								}
