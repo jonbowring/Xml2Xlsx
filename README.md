@@ -76,7 +76,7 @@ XPath|Description
 ## Examples:
 ### A Simple Worksheet With Auto Filters:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example1.png?raw=true" alt="A Simple Worksheet With Auto Filters"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example1.png?raw=true" alt="A Simple Worksheet With Auto Filters"/>
 
 ```
 <workbook>
@@ -117,7 +117,7 @@ XPath|Description
 
 ### Cell Data Types:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example2.png?raw=true" alt="Cell Data Types"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example2.png?raw=true" alt="Cell Data Types"/>
 
 ```
 <workbook>
@@ -166,7 +166,7 @@ XPath|Description
 
 ### Formulas:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example3.png?raw=true" alt="Formulas"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example3.png?raw=true" alt="Formulas"/>
 
 ```
 <workbook>
@@ -217,7 +217,7 @@ XPath|Description
 
 ### Basic Table:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example4.png?raw=true" alt="Basic Table"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example4.png?raw=true" alt="Basic Table"/>
 
 ```
 <workbook>
@@ -259,7 +259,7 @@ XPath|Description
 
 ### Cell Borders:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example5.png?raw=true" alt="Cell Borders"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example5.png?raw=true" alt="Cell Borders"/>
 
 ```
 <workbook>
@@ -308,7 +308,7 @@ XPath|Description
 
 ### Fonts:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example6.png?raw=true" alt="Fonts"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example6.png?raw=true" alt="Fonts"/>
 
 ```
 <workbook>
@@ -357,7 +357,7 @@ XPath|Description
 
 ### Fill:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example7.png?raw=true" alt="Fonts"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example7.png?raw=true" alt="Fonts"/>
 
 ```
 <workbook>
@@ -403,7 +403,7 @@ XPath|Description
 
 ### Data Validations:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example8.png?raw=true" alt="Fonts"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example8.png?raw=true" alt="Fonts"/>
 
 ```
 <workbook>
@@ -458,7 +458,7 @@ XPath|Description
 
 ### Mash up:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example9.png?raw=true" alt="Fonts"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example9.png?raw=true" alt="Fonts"/>
 
 ```
 <workbook>
