@@ -20,6 +20,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
+import org.apache.poi.xssf.usermodel.XSSFBuiltinTableStyle;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -401,7 +402,12 @@ public class AppXml2Xlsx {
 									SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 									Date cellDate = fmt.parse(cellValue);
 									xlCell.setCellValue(cellDate);
-									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(style.getFormatPattern()));
+									if(style.getFormatPattern().length() > 0) {
+										cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(style.getFormatPattern()));
+									}
+									else {
+										cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
+									}
 									break;
 								default:
 									xlCell.setCellValue(cellValue);
