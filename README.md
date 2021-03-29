@@ -81,36 +81,36 @@ XPath|Description
 ```
 <workbook>
 	<worksheet name="Books" autofilter="true">
-			<row>
-				<cell>Title</cell>
-				<cell>Author</cell>
-				<cell>Year</cell>
-				<cell>Price</cell>
-			</row>
-			<row>
-				<cell>Everyday Italian</cell>
-				<cell>Giada De Laurentiis</cell>
-				<cell>2005</cell>
-				<cell>30.00</cell>
-			</row>
-			<row>
-				<cell>Harry Potter</cell>
-				<cell>J K. Rowling</cell>
-				<cell>2005</cell>
-				<cell>29.99</cell>
-			</row>
-			<row>
-				<cell>XQuery Kick Start</cell>
-				<cell>Vaidyanathan Nagarajan</cell>
-				<cell>2003</cell>
-				<cell>49.99</cell>
-			</row>
-			<row>
-				<cell>Learning XML</cell>
-				<cell>Erik T. Ray</cell>
-				<cell>2003</cell>
-				<cell>39.95</cell>
-			</row>
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell>Everyday Italian</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell>2005</cell>
+			<cell>30.00</cell>
+		</row>
+		<row>
+			<cell>Harry Potter</cell>
+			<cell>J K. Rowling</cell>
+			<cell>2005</cell>
+			<cell>29.99</cell>
+		</row>
+		<row>
+			<cell>XQuery Kick Start</cell>
+			<cell>Vaidyanathan Nagarajan</cell>
+			<cell>2003</cell>
+			<cell>49.99</cell>
+		</row>
+		<row>
+			<cell>Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell>2003</cell>
+			<cell>39.95</cell>
+		</row>
 	</worksheet>
 </workbook>
 ```
@@ -130,36 +130,36 @@ XPath|Description
 		</style>
 	</styles>
 	<worksheet name="Books" autofilter="true">
-			<row>
-				<cell>Title</cell>
-				<cell>Author</cell>
-				<cell>Year</cell>
-				<cell>Price</cell>
-			</row>
-			<row>
-				<cell>Everyday Italian</cell>
-				<cell>Giada De Laurentiis</cell>
-				<cell style="myInt">2005</cell>
-				<cell style="myFloat">30.00</cell>
-			</row>
-			<row>
-				<cell>Harry Potter</cell>
-				<cell>J K. Rowling</cell>
-				<cell style="myInt">2005</cell>
-				<cell style="myFloat">29.99</cell>
-			</row>
-			<row>
-				<cell>XQuery Kick Start</cell>
-				<cell>Vaidyanathan Nagarajan</cell>
-				<cell style="myInt">2003</cell>
-				<cell style="myFloat">49.99</cell>
-			</row>
-			<row>
-				<cell>Learning XML</cell>
-				<cell>Erik T. Ray</cell>
-				<cell style="myInt">2003</cell>
-				<cell style="myFloat">39.95</cell>
-			</row>
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell>Everyday Italian</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell style="myInt">2005</cell>
+			<cell style="myFloat">30.00</cell>
+		</row>
+		<row>
+			<cell>Harry Potter</cell>
+			<cell>J K. Rowling</cell>
+			<cell style="myInt">2005</cell>
+			<cell style="myFloat">29.99</cell>
+		</row>
+		<row>
+			<cell>XQuery Kick Start</cell>
+			<cell>Vaidyanathan Nagarajan</cell>
+			<cell style="myInt">2003</cell>
+			<cell style="myFloat">49.99</cell>
+		</row>
+		<row>
+			<cell>Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell style="myInt">2003</cell>
+			<cell style="myFloat">39.95</cell>
+		</row>
 	</worksheet>
 </workbook>
 ```
@@ -176,41 +176,83 @@ XPath|Description
 		</style>
 	</styles>
 	<worksheet name="Books" autofilter="true">
-			<row>
-				<cell>Title</cell>
-				<cell>Author</cell>
-				<cell>Year</cell>
-				<cell>Price</cell>
-				<cell>Formula</cell>
-			</row>
-			<row>
-				<cell>Everyday Italian</cell>
-				<cell>Giada De Laurentiis</cell>
-				<cell>2005</cell>
-				<cell>30.00</cell>
-				<cell style="myFormula">A2&amp;" - "&amp;B2</cell>
-			</row>
-			<row>
-				<cell>Harry Potter</cell>
-				<cell>J K. Rowling</cell>
-				<cell>2005</cell>
-				<cell>29.99</cell>
-				<cell style="myFormula">C2 * D2</cell>
-			</row>
-			<row>
-				<cell>XQuery Kick Start</cell>
-				<cell>Vaidyanathan Nagarajan</cell>
-				<cell>2003</cell>
-				<cell>49.99</cell>
-				<cell style="myFormula">upper(A2)</cell>
-			</row>
-			<row>
-				<cell>Learning XML</cell>
-				<cell>Erik T. Ray</cell>
-				<cell>2003</cell>
-				<cell>39.95</cell>
-				<cell style="myFormula">lower(B2)</cell>
-			</row>
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+			<cell>Formula</cell>
+		</row>
+		<row>
+			<cell>Everyday Italian</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell>2005</cell>
+			<cell>30.00</cell>
+			<cell style="myFormula">A2&amp;" - "&amp;B2</cell>
+		</row>
+		<row>
+			<cell>Harry Potter</cell>
+			<cell>J K. Rowling</cell>
+			<cell>2005</cell>
+			<cell>29.99</cell>
+			<cell style="myFormula">C2 * D2</cell>
+		</row>
+		<row>
+			<cell>XQuery Kick Start</cell>
+			<cell>Vaidyanathan Nagarajan</cell>
+			<cell>2003</cell>
+			<cell>49.99</cell>
+			<cell style="myFormula">upper(A2)</cell>
+		</row>
+		<row>
+			<cell>Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell>2003</cell>
+			<cell>39.95</cell>
+			<cell style="myFormula">lower(B2)</cell>
+		</row>
+	</worksheet>
+</workbook>
+```
+
+### A Simple Worksheet With A Table:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example4.png?raw=true" alt="A Simple Worksheet With A Table"/>
+
+```
+<workbook>
+	<worksheet name="Books" autofilter="true">
+		<table name="My_Table" colStripes="false" rowStripes="true" style="TableStyleMedium3"/>
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell>Everyday Italian</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell>2005</cell>
+			<cell>30.00</cell>
+		</row>
+		<row>
+			<cell>Harry Potter</cell>
+			<cell>J K. Rowling</cell>
+			<cell>2005</cell>
+			<cell>29.99</cell>
+		</row>
+		<row>
+			<cell>XQuery Kick Start</cell>
+			<cell>Vaidyanathan Nagarajan</cell>
+			<cell>2003</cell>
+			<cell>49.99</cell>
+		</row>
+		<row>
+			<cell>Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell>2003</cell>
+			<cell>39.95</cell>
+		</row>
 	</worksheet>
 </workbook>
 ```
