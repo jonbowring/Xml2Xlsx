@@ -117,7 +117,7 @@ XPath|Description
 
 ### A Simple Worksheet With Integer & Float Data Types:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example1.png?raw=true" alt="A Simple Table With Auto Filters"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example2.png?raw=true" alt="A Simple Table With Auto Filters"/>
 
 ```
 <workbook>
