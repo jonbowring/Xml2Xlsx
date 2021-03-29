@@ -400,3 +400,58 @@ XPath|Description
 	</worksheet>
 </workbook>
 ```
+
+### Data Validations:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/readme-v1/examples/example8.png?raw=true" alt="Fonts"/>
+
+```
+<workbook>
+	<validations>
+		<validation name="my_validation1">
+			<type>fixed-list</type>
+			<values>
+				<value>FOO</value>
+				<value>BAR</value>
+				<value>CAT</value>
+			</values>
+		</validation>
+		<validation name="my_validation2">
+			<type>formula-list</type>
+			<formula>'Books'!$B$2:$B$5</formula>
+		</validation>
+	</validations>
+	<worksheet name="Books" autofilter="true">
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell validation="my_validation1">Everyday Italian</cell>
+			<cell validation="my_validation2">Giada De Laurentiis</cell>
+			<cell>2005</cell>
+			<cell>30.00</cell>
+		</row>
+		<row>
+			<cell validation="my_validation1">Harry Potter</cell>
+			<cell validation="my_validation2">J K. Rowling</cell>
+			<cell>2005</cell>
+			<cell>29.99</cell>
+		</row>
+		<row>
+			<cell validation="my_validation1">XQuery Kick Start</cell>
+			<cell validation="my_validation2">Vaidyanathan Nagarajan</cell>
+			<cell>2003</cell>
+			<cell>49.99</cell>
+		</row>
+		<row>
+			<cell validation="my_validation1">Learning XML</cell>
+			<cell validation="my_validation2">Erik T. Ray</cell>
+			<cell>2003</cell>
+			<cell>39.95</cell>
+		</row>
+	</worksheet>
+</workbook>
+```
