@@ -1,0 +1,309 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+	<!-- Type definitions -->
+	<xs:simpleType name="nameType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Za-z0-9_]+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="tableStyleType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="TableStyleDark1"/>
+			<xs:enumeration value="TableStyleDark2"/>
+			<xs:enumeration value="TableStyleDark3"/>
+			<xs:enumeration value="TableStyleDark4"/>
+			<xs:enumeration value="TableStyleDark5"/>
+			<xs:enumeration value="TableStyleDark6"/>
+			<xs:enumeration value="TableStyleDark7"/>
+			<xs:enumeration value="TableStyleDark8"/>
+			<xs:enumeration value="TableStyleDark9"/>
+			<xs:enumeration value="TableStyleDark10"/>
+			<xs:enumeration value="TableStyleLight1"/>
+			<xs:enumeration value="TableStyleLight2"/>
+			<xs:enumeration value="TableStyleLight3"/>
+			<xs:enumeration value="TableStyleLight4"/>
+			<xs:enumeration value="TableStyleLight5"/>
+			<xs:enumeration value="TableStyleLight6"/>
+			<xs:enumeration value="TableStyleLight7"/>
+			<xs:enumeration value="TableStyleLight8"/>
+			<xs:enumeration value="TableStyleLight9"/>
+			<xs:enumeration value="TableStyleLight10"/>
+			<xs:enumeration value="TableStyleLight11"/>
+			<xs:enumeration value="TableStyleLight12"/>
+			<xs:enumeration value="TableStyleLight13"/>
+			<xs:enumeration value="TableStyleLight14"/>
+			<xs:enumeration value="TableStyleLight15"/>
+			<xs:enumeration value="TableStyleLight16"/>
+			<xs:enumeration value="TableStyleLight17"/>
+			<xs:enumeration value="TableStyleLight18"/>
+			<xs:enumeration value="TableStyleLight19"/>
+			<xs:enumeration value="TableStyleLight20"/>
+			<xs:enumeration value="TableStyleDark21"/>
+			<xs:enumeration value="TableStyleMedium1"/>
+			<xs:enumeration value="TableStyleMedium2"/>
+			<xs:enumeration value="TableStyleMedium3"/>
+			<xs:enumeration value="TableStyleMedium4"/>
+			<xs:enumeration value="TableStyleMedium5"/>
+			<xs:enumeration value="TableStyleMedium6"/>
+			<xs:enumeration value="TableStyleMedium7"/>
+			<xs:enumeration value="TableStyleMedium8"/>
+			<xs:enumeration value="TableStyleMedium9"/>
+			<xs:enumeration value="TableStyleMedium10"/>
+			<xs:enumeration value="TableStyleMedium11"/>
+			<xs:enumeration value="TableStyleMedium12"/>
+			<xs:enumeration value="TableStyleMedium13"/>
+			<xs:enumeration value="TableStyleMedium14"/>
+			<xs:enumeration value="TableStyleMedium15"/>
+			<xs:enumeration value="TableStyleMedium16"/>
+			<xs:enumeration value="TableStyleMedium17"/>
+			<xs:enumeration value="TableStyleMedium18"/>
+			<xs:enumeration value="TableStyleMedium19"/>
+			<xs:enumeration value="TableStyleMedium20"/>
+			<xs:enumeration value="TableStyleMedium21"/>
+			<xs:enumeration value="TableStyleMedium22"/>
+			<xs:enumeration value="TableStyleMedium23"/>
+			<xs:enumeration value="TableStyleMedium24"/>
+			<xs:enumeration value="TableStyleMedium25"/>
+			<xs:enumeration value="TableStyleMedium26"/>
+			<xs:enumeration value="TableStyleMedium27"/>
+			<xs:enumeration value="TableStyleMedium28"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="formatType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="formula"/>
+			<xs:enumeration value="string"/>
+			<xs:enumeration value="int"/>
+			<xs:enumeration value="float"/>
+			<xs:enumeration value="date"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="strBoolType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="true"/>
+			<xs:enumeration value="false"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="validationType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="fixed-list"/>
+			<xs:enumeration value="formula-list"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="halignType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="left"/>
+			<xs:enumeration value="center"/>
+			<xs:enumeration value="right"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="valignType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="top"/>
+			<xs:enumeration value="center"/>
+			<xs:enumeration value="bottom"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="borderPosType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="top"/>
+			<xs:enumeration value="right"/>
+			<xs:enumeration value="bottom"/>
+			<xs:enumeration value="left"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="borderLineType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="dash-dot"/>
+			<xs:enumeration value="dash-dot-dot"/>
+			<xs:enumeration value="dashed"/>
+			<xs:enumeration value="dotted"/>
+			<xs:enumeration value="double"/>
+			<xs:enumeration value="hair"/>
+			<xs:enumeration value="medium"/>
+			<xs:enumeration value="medium-dash-dot"/>
+			<xs:enumeration value="medium-dash-dot-dot"/>
+			<xs:enumeration value="medium-dashed"/>
+			<xs:enumeration value="none"/>
+			<xs:enumeration value="slanted-dash-dot"/>
+			<xs:enumeration value="thick"/>
+			<xs:enumeration value="thin"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="fillPatternType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="alt-bars"/>
+			<xs:enumeration value="big-spots"/>
+			<xs:enumeration value="bricks"/>
+			<xs:enumeration value="diamonds"/>
+			<xs:enumeration value="fine-dots"/>
+			<xs:enumeration value="least-dots"/>
+			<xs:enumeration value="less-dots"/>
+			<xs:enumeration value="no-fill"/>
+			<xs:enumeration value="solid-foreground"/>
+			<xs:enumeration value="sparse-dots"/>
+			<xs:enumeration value="squares"/>
+			<xs:enumeration value="thick-backward-diag"/>
+			<xs:enumeration value="thick-forward-diag"/>
+			<xs:enumeration value="thick-horz-bands"/>
+			<xs:enumeration value="thick-vert-bands"/>
+			<xs:enumeration value="thin-backward-diag"/>
+			<xs:enumeration value="thin-forward-diag"/>
+			<xs:enumeration value="thin-horz-bands"/>
+			<xs:enumeration value="thin-vert-bands"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="colourType">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="rgb\(\d+,\d+,\d+\)|aqua|automatic|black|black1|blue|blue1|blue-grey|bright-green|bright-green1|brown|coral|cornflower-blue|dark-blue|dark-green|dark-red|dark-teal|dark-yellow|gold|green|grey-25-percent|grey-40-percent|grey-50-percent|grey-80-percent|indigo|lavender|lemon-chiffon|light-blue|light-cornflower-blue|light-green|light-orange|light-turquoise|light-turquoise1|light-yellow|lime|maroon|olive-green|orange|orchid|pale-blue|pink|pink1|plum|red|red1|rose|royal-blue|sea-green|sky-blue|tan|tan|turquoise|turquoise1|violet|white|white1|yellow|yellow1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+
+	<!-- XML file definition -->
+	<xs:element name="workbook">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="styles" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="style" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="align" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute type="halignType" name="horizontal" use="optional"/>
+														<xs:attribute type="valignType" name="vertical" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="border" minOccurs="0" maxOccurs="4">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute type="borderPosType" name="pos" use="required"/>
+														<xs:attribute type="borderLineType" name="type" use="optional"/>
+														<xs:attribute type="colourType" name="colour" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="fill" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute type="colourType" name="colour" use="required"/>
+														<xs:attribute type="fillPatternType" name="pattern" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="font" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element type="xs:string" name="italic" minOccurs="0" maxOccurs="1"/>
+													<xs:element type="xs:string" name="strikeout" minOccurs="0" maxOccurs="1"/>
+												</xs:sequence>
+												<xs:attribute type="xs:string" name="name" use="required"/>
+												<xs:attribute type="xs:int" name="size" use="optional"/>
+												<xs:attribute type="colourType" name="colour" use="optional"/>
+											</xs:complexType>
+										</xs:element>
+										<xs:element type="xs:string" name="wrap" minOccurs="0" maxOccurs="1"/>
+										<xs:element name="format" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute type="formatType" name="type" use="required"/>
+														<!-- If type is date then pattern should be populated -->
+														<xs:attribute type="xs:string" name="pattern" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute type="nameType" name="name" use="required"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="validations" minOccurs="0" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="validation" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element type="validationType" name="type" minOccurs="1" maxOccurs="1"/>
+										<!-- Mandatory if type is fixed-list -->
+										<xs:element name="values" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element type="xs:string" name="value" minOccurs="1" maxOccurs="unbounded"/>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<!-- Mandatory if type is formula-list -->
+										<xs:element type="xs:string" name="formula" minOccurs="0" maxOccurs="1"/>
+									</xs:sequence>
+									<!-- Name must be made up of letters, numbers and underscores only -->
+									<xs:attribute type="nameType" name="name" use="required"/>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="worksheet" minOccurs="1" maxOccurs="255">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="table" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute type="nameType" name="name" use="required"/>
+											<xs:attribute type="strBoolType" name="colStripes" use="optional"/>
+											<xs:attribute type="strBoolType" name="rowStripes" use="optional"/>
+											<xs:attribute type="tableStyleType" name="style" use="optional"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="row" minOccurs="1" maxOccurs="1048576">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="cell" minOccurs="1" maxOccurs="16384">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute type="xs:string" name="style" use="optional"/>
+														<xs:attribute type="xs:string" name="validation" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute type="xs:string" name="name" use="required"/>
+						<xs:attribute type="xs:string" name="autofilter" use="optional"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
