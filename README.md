@@ -495,8 +495,8 @@ XPath|Description
 			<fill colour="aqua"/>
 		</style>
 		<style name="int">
-			<format type="int"/>
 			<fill colour="rgb(100,200,50)" pattern="squares"/>
+			<format type="int"/>
 		</style>
 	</styles>
 	<validations>
