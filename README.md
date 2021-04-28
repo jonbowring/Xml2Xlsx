@@ -62,6 +62,7 @@ XPath|Description
 /workbook/worksheet|Mandatory. Used to specify a worksheet tab to be included in the Excel file.
 /workbook/worksheet/@name|Mandatory. The name of the worksheet tab.
 /workbook/worksheet/@autofilter|Optional. Used to define if auto filters should be applied to the first row in the worksheet. This option is ignored if a table has been defined for the worksheet as auto filters are automatically applied to tables.
+/workbook/worksheet/@autofit|Optional. Used to define if the columns for the worksheet should automatically be resized to fit the contents.
 /workbook/worksheet/table|Optional. Used to define if the worksheet data should be contained within a table.
 /workbook/worksheet/table/@name|Mandatory. The name for the table. The name can only contain numbers, letters and underscores.
 /workbook/worksheet/table/@colStripes|Optional. Used to specify if column colour striping should be applied. Possible values include "true" and "false".
