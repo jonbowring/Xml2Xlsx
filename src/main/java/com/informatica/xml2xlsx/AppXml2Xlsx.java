@@ -757,6 +757,24 @@ public class AppXml2Xlsx {
 				
 			} // End if has autofilter
 			
+			/*
+			 * Manage the worksheet column autofit
+			 * --------------------------------------------
+			 */
+			
+			// Apply the column auto fit if set
+			if(worksheet.hasAttribute("autofit")) {
+				
+				if(worksheet.getAttribute("autofit").equals("true")) {
+					
+					for(int i = 0; i < maxC; i++) {
+						xlSheet.autoSizeColumn(i);
+					}
+					
+				}
+				
+			} // End if has autofit
+			
 		} // End of worksheets loop
 		
 		/*
