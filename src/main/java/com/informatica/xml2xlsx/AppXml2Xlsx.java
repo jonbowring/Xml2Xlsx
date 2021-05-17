@@ -20,7 +20,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
-import org.apache.poi.xssf.usermodel.XSSFBuiltinTableStyle;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -28,7 +27,6 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
 import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFName;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
@@ -50,7 +48,7 @@ public class AppXml2Xlsx {
 		// Declare and initialise the variables
 		String src = "", 
 				tgt = "";
-		HashMap<String, Style> styleMap = new HashMap<String, Style>();
+		HashMap<String, XSSFCellStyle> styleMap = new HashMap<String, XSSFCellStyle>();
 		HashMap<String, Validation> validationMap = new HashMap<String, Validation>();
 		StyleHelper styleHelper = new StyleHelper();
 		
@@ -103,7 +101,8 @@ public class AppXml2Xlsx {
 				
 				// Initialise the style object
 				Element styleEl = (Element) styles.item(y);
-				Style style = new Style(styleEl.getAttribute("name"), xlWorkbook);
+				String styleName = styleEl.getAttribute("name");
+				XSSFCellStyle cellStyle = xlWorkbook.createCellStyle();
 				
 				// If the style has an attribute element
 				if(styleEl.getElementsByTagName("align").getLength() > 0 ) {
@@ -112,32 +111,45 @@ public class AppXml2Xlsx {
 					
 					// If it has the valign attribute then save it
 					if(align.hasAttribute("vertical")) {
-						style.setVAlign(align.getAttribute("vertical"));
+						
+						switch(align.getAttribute("vertical")) {
+							case "top":
+								cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
+								break;
+							case "center":
+								cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+								break;
+							case "bottom":
+								cellStyle.setVerticalAlignment(VerticalAlignment.BOTTOM);
+								break;
+							default:
+								break;
+								
+						} // End valign switch
+						
 					}
 					
 					// If it has the halign attribute then save it
 					if(align.hasAttribute("horizontal")) {
-						style.setHAlign(align.getAttribute("horizontal"));
+						
+						switch(align.getAttribute("horizontal")) {
+							case "left":
+								cellStyle.setAlignment(HorizontalAlignment.LEFT);
+								break;
+							case "center":
+								cellStyle.setAlignment(HorizontalAlignment.CENTER);
+								break;
+							case "right":
+								cellStyle.setAlignment(HorizontalAlignment.RIGHT);
+								break;
+							default:
+								break;
+								
+						} // End halign switch
+						
 					}
 					
-				} // End of if style has align element
-				
-				// If the style has a format element
-				if(styleEl.getElementsByTagName("format").getLength() > 0 ) {
-					
-					Element format = (Element) styleEl.getElementsByTagName("format").item(0);
-					
-					// If it has the type element then save it 
-					if(format.hasAttribute("type")) {
-						style.setFormatType(format.getAttribute("type"));
-					}
-					
-					// If it has the pattern element then save it 
-					if(format.hasAttribute("pattern")) {
-						style.setFormatPattern(format.getAttribute("pattern"));
-					}
-					
-				} // End if style has format element
+				}
 				
 				// If the style has a fill element
 				if(styleEl.getElementsByTagName("fill").getLength() > 0 ) {
@@ -146,16 +158,34 @@ public class AppXml2Xlsx {
 					
 					// If it has the colour element then save it 
 					if(fill.hasAttribute("colour")) {
-						style.setFillColour(fill.getAttribute("colour"));
+						String fillColour = fill.getAttribute("colour");
+						
+						// If an rgb colour has been specified then use that
+						if(fillColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+							
+							String[] rgb = fillColour.substring(4, fillColour.length() - 1).split("\\s*,\\s*");
+							cellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+						}
+						else {
+							cellStyle.setFillForegroundColor(styleHelper.getColours().get(fillColour).getIndex());
+						}
+						
 					}
 					
 					// If it has the colour and pattern defined then save it 
 					if(fill.hasAttribute("colour") && fill.hasAttribute("pattern")) {
-						style.setFillPattern(fill.getAttribute("pattern"));
+						
+						// Apply the fill pattern if set
+						String fillPattern = fill.getAttribute("pattern");
+						if(fillPattern.length() > 0) {
+							cellStyle.setFillPattern(styleHelper.getFillPatterns().get(fillPattern));
+						}
+
 					}
 					// Else if it has the the colour but no pattern then use a default pattern
 					else if(fill.hasAttribute("colour") && !fill.hasAttribute("pattern")) {
-						style.setFillPattern("solid-foreground");
+						cellStyle.setFillPattern(styleHelper.getFillPatterns().get("solid-foreground"));
+						
 					}
 					
 				} // End if style has fill element
@@ -163,10 +193,9 @@ public class AppXml2Xlsx {
 				// If the style has a wrap element then set wrap to true
 				if(styleEl.getElementsByTagName("wrap").getLength() > 0 ) {
 					
-					style.setWrap(true);
+					cellStyle.setWrapText(true);
 					
 				}
-				
 				
 				// If the style has border elements
 				NodeList borders = styleEl.getElementsByTagName("border");
@@ -177,23 +206,120 @@ public class AppXml2Xlsx {
 						
 						// Initialise the border object
 						Element borderEl = (Element) borders.item(b);
-						Border border;
-						if(borderEl.hasAttribute("type") && borderEl.hasAttribute("colour")) {
-							border = new Border(borderEl.getAttribute("pos"), borderEl.getAttribute("type"), borderEl.getAttribute("colour"));
-						}
-						else if(borderEl.hasAttribute("type")) {
-							border = new Border(borderEl.getAttribute("pos"), borderEl.getAttribute("type"));
-						}
-						else {
-							border = new Border(borderEl.getAttribute("pos"));
+						String borderPos = "", borderType = "", borderColour = "";
+						BorderStyle borderStyle = null;
+						IndexedColors idxBorderColour = null;
+						
+						if(borderEl.hasAttribute("pos")) {
+							borderPos = borderEl.getAttribute("pos");
 						}
 						
-						// Add the border to the style
-						style.addBorder(border);
+						if(borderEl.hasAttribute("type")) {
+							borderType = borderEl.getAttribute("type");
+						}
+
+						if(borderEl.hasAttribute("colour")) {
+							borderColour = borderEl.getAttribute("colour");
+						}
+
+						switch(borderPos) {
+							case "top":
+								// Apply the style if set
+								borderStyle = styleHelper.getBorderStyles().get(borderType);
+								if(borderStyle != null) {
+									cellStyle.setBorderTop(borderStyle);
+								}
+								
+								// Apply the colour if set
+								idxBorderColour = styleHelper.getColours().get(borderColour);
+								
+								// If an rgb colour has been specified then use that
+								if(borderColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+									
+									String[] rgb = borderColour.substring(4, borderColour.length() - 1).split("\\s*,\\s*");
+									cellStyle.setTopBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+								}
+								else if(idxBorderColour != null) {
+									cellStyle.setTopBorderColor(idxBorderColour.getIndex());
+								}
+								
+								break;
+								
+							case "right":
+								// Apply the style if set
+								borderStyle = styleHelper.getBorderStyles().get(borderType);
+								if(borderStyle != null) {
+									cellStyle.setBorderRight(borderStyle);
+								}
+								
+								// Apply the colour if set
+								idxBorderColour = styleHelper.getColours().get(borderColour);
+								
+								// If an rgb colour has been specified then use that
+								if(borderColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+									
+									String[] rgb = borderColour.substring(4, borderColour.length() - 1).split("\\s*,\\s*");
+									cellStyle.setRightBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+								}
+								else if(idxBorderColour != null) {
+									cellStyle.setRightBorderColor(idxBorderColour.getIndex());
+								}
+								
+								break;
+								
+							case "bottom":
+								// Apply the style if set
+								borderStyle = styleHelper.getBorderStyles().get(borderType);
+								if(borderStyle != null) {
+									cellStyle.setBorderBottom(borderStyle);
+								}
+								
+								// Apply the colour if set
+								idxBorderColour = styleHelper.getColours().get(borderColour);
+								
+								// If an rgb colour has been specified then use that
+								if(borderColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+									
+									String[] rgb = borderColour.substring(4, borderColour.length() - 1).split("\\s*,\\s*");
+									cellStyle.setBottomBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+								}
+								else if(idxBorderColour != null) {
+									cellStyle.setBottomBorderColor(idxBorderColour.getIndex());
+								}
+								
+								break;
+								
+							case "left":
+								// Apply the style if set
+								borderStyle = styleHelper.getBorderStyles().get(borderType);
+								if(borderStyle != null) {
+									cellStyle.setBorderLeft(borderStyle);
+								}
+								
+								// Apply the colour if set
+								idxBorderColour = styleHelper.getColours().get(borderColour);
+								
+								// If an rgb colour has been specified then use that
+								if(borderColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
+									
+									String[] rgb = borderColour.substring(4, borderColour.length() - 1).split("\\s*,\\s*");
+									cellStyle.setLeftBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
+								}
+								else if(idxBorderColour != null) {
+									cellStyle.setLeftBorderColor(idxBorderColour.getIndex());
+								}
+								
+								break;
+								
+							default:
+								break;
+						}
+						
 						
 					} // End of borders loop
 					
 				} // End if borders length > 0
+				
 				
 				// Add the font styles if set
 				Element fontEl = (Element) styleEl.getElementsByTagName("font").item(0);
@@ -246,16 +372,16 @@ public class AppXml2Xlsx {
 					}
 					
 					// Save the font
-					style.setFont(font);
+					cellStyle.setFont(font);
 					
 				} // End if has font element
 				
 				// Add the current style to the hash map
-				styleMap.put(styleEl.getAttribute("name"), style);
+				styleMap.put(styleName, cellStyle);
 				
-			} // End of styles loop
+			} // End of styles for loop
 			
-		} // End of if styles.getLength() > 0
+		} // End of if have styles check
 		
 		// Parse the styles
 		NodeList validations = (NodeList) xpath.evaluate("/workbook/validations/validation", doc, XPathConstants.NODESET);
@@ -364,247 +490,64 @@ public class AppXml2Xlsx {
 					
 					// Initialise the target Excel cell and add the value
 					XSSFCell xlCell = xlRow.createCell(c);
+					
+					/*
 					XSSFCellStyle cellStyle = xlWorkbook.createCellStyle();
-					
-					
+					*/
 					// If a cell style has been applied then add it to the cell
 					if(cell.hasAttribute("style")) {
 						
-						// Get the style settings
-						Style style = styleMap.get(cell.getAttribute("style"));
-						
-						/*
-						 * Manage the cell data type
-						 * --------------------------------------------
-						 */
-						
 						// Apply the cell format if set
-						String formatType = style.getFormatType();
-						if(formatType.length() > 0) {
+						// Parse the styles
+						NodeList formats = (NodeList) xpath.evaluate("/workbook/styles/style[@name = '" + cell.getAttribute("style") + "']/format", doc, XPathConstants.NODESET);
+						
+						
+						if(formats.getLength() > 0) {
 							
-							// Apply the cell data types
-							switch(formatType) {
-								case "formula":
-									xlCell.setCellFormula(cellValue);
-									break;
-								case "string":
-									xlCell.setCellValue(cellValue);
-									break;
-								case "int":
-									int cellInt = Integer.parseInt(cellValue);
-									xlCell.setCellValue(cellInt);
-									break;
-								case "float":
-									Double cellDouble = Double.parseDouble(cellValue);
-									xlCell.setCellValue(cellDouble);
-									break;
-								case "date":
-									SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-									Date cellDate = fmt.parse(cellValue);
-									xlCell.setCellValue(cellDate);
-									if(style.getFormatPattern().length() > 0) {
-										cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(style.getFormatPattern()));
-									}
-									else {
-										cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
-									}
-									break;
-								default:
-									xlCell.setCellValue(cellValue);
-									break;
-							} // End data type switch
+							Element formatEl = (Element) formats.item(0);
+							
+							if(formatEl.hasAttribute("type")) {
+								
+								// Apply the cell data types
+								switch(formatEl.getAttribute("type")) {
+									case "formula":
+										xlCell.setCellFormula(cellValue);
+										break;
+									case "string":
+										xlCell.setCellValue(cellValue);
+										break;
+									case "int":
+										int cellInt = Integer.parseInt(cellValue);
+										xlCell.setCellValue(cellInt);
+										break;
+									case "float":
+										Double cellDouble = Double.parseDouble(cellValue);
+										xlCell.setCellValue(cellDouble);
+										break;
+									case "date":
+										SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+										Date cellDate = fmt.parse(cellValue);
+										xlCell.setCellValue(cellDate);
+										if(formatEl.hasAttribute("pattern")) {
+											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(formatEl.getAttribute("pattern")));
+										}
+										else {
+											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
+										}
+										break;
+									default:
+										xlCell.setCellValue(cellValue);
+										break;
+								} // End data type switch
+								
+							}
+							
+							// Save the style to the cell
+							xlCell.setCellStyle(styleMap.get(cell.getAttribute("style")));
 							
 						} // End if cell has format
 						else {
 							xlCell.setCellValue(cellValue);
-						}
-						
-						/*
-						 * Manage the cell alignments
-						 * --------------------------------------------
-						 */
-						
-						// Apply the vertical alignment if set
-						String valign = style.getVAlign();
-						if(valign.length() > 0) {
-							
-							switch(valign) {
-								case "top":
-									cellStyle.setVerticalAlignment(VerticalAlignment.TOP);
-									break;
-								case "center":
-									cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-									break;
-								case "bottom":
-									cellStyle.setVerticalAlignment(VerticalAlignment.BOTTOM);
-									break;
-								default:
-									break;
-									
-							} // End valign switch
-							
-						} // End if has valign
-						
-						// Apply the horizontal alignment if set
-						String halign = style.getHAlign();
-						if(halign.length() > 0) {
-							
-							switch(halign) {
-								case "left":
-									cellStyle.setAlignment(HorizontalAlignment.LEFT);
-									break;
-								case "center":
-									cellStyle.setAlignment(HorizontalAlignment.CENTER);
-									break;
-								case "right":
-									cellStyle.setAlignment(HorizontalAlignment.RIGHT);
-									break;
-								default:
-									break;
-									
-							} // End halign switch
-							
-						} // End if has halign
-						
-						/*
-						 * Manage the cell borders
-						 * --------------------------------------------
-						 */
-						
-						// Apply the top border if set
-						Border borderTop = style.getBorder("top");
-						if(borderTop != null) {
-							
-							// Apply the style if set
-							BorderStyle borderStyle = styleHelper.getBorderStyles().get(borderTop.getType());
-							if(borderStyle != null) {
-								cellStyle.setBorderTop(borderStyle);
-							}
-							
-							// Apply the colour if set
-							IndexedColors borderColour = styleHelper.getColours().get(borderTop.getColour());
-							
-							// If an rgb colour has been specified then use that
-							if(borderTop.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
-								
-								String[] rgb = borderTop.getColour().substring(4, borderTop.getColour().length() - 1).split("\\s*,\\s*");
-								cellStyle.setTopBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
-							}
-							else if(borderColour != null) {
-								cellStyle.setTopBorderColor(borderColour.getIndex());
-							}
-							
-						} // End if has borderTop
-						
-						// Apply the right border if set
-						Border borderRight = style.getBorder("right");
-						if(borderRight != null) {
-							
-							// Apply the style if set
-							BorderStyle borderStyle = styleHelper.getBorderStyles().get(borderRight.getType());
-							if(borderStyle != null) {
-								cellStyle.setBorderRight(borderStyle);
-							}
-							
-							// Apply the colour if set
-							IndexedColors borderColour = styleHelper.getColours().get(borderRight.getColour());
-							
-							// If an rgb colour has been specified then use that
-							if(borderRight.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
-								
-								String[] rgb = borderRight.getColour().substring(4, borderRight.getColour().length() - 1).split("\\s*,\\s*");
-								cellStyle.setRightBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
-							}
-							else if(borderColour != null) {
-								cellStyle.setRightBorderColor(borderColour.getIndex());
-							}
-							
-						} // End if has borderRight
-						
-						// Apply the bottom border if set
-						Border borderBottom = style.getBorder("bottom");
-						if(borderBottom != null) {
-							
-							// Apply the style if set
-							BorderStyle borderStyle = styleHelper.getBorderStyles().get(borderBottom.getType());
-							if(borderStyle != null) {
-								cellStyle.setBorderBottom(borderStyle);
-							}
-							
-							// Apply the colour if set
-							IndexedColors borderColour = styleHelper.getColours().get(borderBottom.getColour());
-							
-							// If an rgb colour has been specified then use that
-							if(borderBottom.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
-								
-								String[] rgb = borderBottom.getColour().substring(4, borderBottom.getColour().length() - 1).split("\\s*,\\s*");
-								cellStyle.setBottomBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
-							}
-							else if(borderColour != null) {
-								cellStyle.setBottomBorderColor(borderColour.getIndex());
-							}
-							
-						} // End if has border bottom
-						
-						// Apply the left border if set
-						Border borderLeft = style.getBorder("left");
-						if(borderLeft != null) {
-							
-							// Apply the style if set
-							BorderStyle borderStyle = styleHelper.getBorderStyles().get(borderLeft.getType());
-							if(borderStyle != null) {
-								cellStyle.setBorderLeft(borderStyle);
-							}
-							
-							// Apply the colour if set
-							IndexedColors borderColour = styleHelper.getColours().get(borderLeft.getColour());
-							
-							// If an rgb colour has been specified then use that
-							if(borderLeft.getColour().matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
-								
-								String[] rgb = borderLeft.getColour().substring(4, borderLeft.getColour().length() - 1).split("\\s*,\\s*");
-								cellStyle.setLeftBorderColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
-							}
-							else if(borderColour != null) {
-								cellStyle.setLeftBorderColor(borderColour.getIndex());
-							}
-							
-						} // End if has border left
-						
-						/*
-						 * Manage the wrap and fill
-						 * --------------------------------------------
-						 */
-						
-						// Apply the cell wrapping
-						cellStyle.setWrapText(style.getWrap());
-						
-						// Apply the fill colour if set
-						String fillColour = style.getFillColour();
-						if(fillColour.length() > 0) {
-							
-							// If an rgb colour has been specified then use that
-							if(fillColour.matches("^rgb\\(\\s*\\d+\\s*,\\s*\\d+\\s*,\\s*\\d+\\s*\\)$")) {
-								
-								String[] rgb = fillColour.substring(4, fillColour.length() - 1).split("\\s*,\\s*");
-								cellStyle.setFillForegroundColor(new XSSFColor(new java.awt.Color(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2])), new DefaultIndexedColorMap()));
-							}
-							else {
-								cellStyle.setFillForegroundColor(styleHelper.getColours().get(fillColour).getIndex());
-							}
-							
-						} // End if has fill colour
-						
-						
-						// Apply the fill pattern if set
-						String fillPattern = style.getFillPattern();
-						if(fillPattern.length() > 0) {
-							cellStyle.setFillPattern(styleHelper.getFillPatterns().get(fillPattern));
-						}
-						
-						// Apply the font if set
-						if(style.getFont() != null) {
-							cellStyle.setFont(style.getFont());
 						}
 						
 					} // End if has style
@@ -613,8 +556,6 @@ public class AppXml2Xlsx {
 						
 					} // End else has style
 					
-					// Save the style to the cell
-					xlCell.setCellStyle(cellStyle);
 					
 					/*
 					 * Manage the cell validations
