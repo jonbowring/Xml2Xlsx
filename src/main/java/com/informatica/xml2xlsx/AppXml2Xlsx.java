@@ -698,6 +698,8 @@ public class AppXml2Xlsx {
 				XSSFTable xlTable = xlSheet.createTable(tableArea);
 				xlTable.getCTTable().addNewAutoFilter().setRef(tableArea.formatAsString());
 				
+				
+				
 				if(table.hasAttribute("name")) {
 					xlTable.setName(table.getAttribute("name"));
 					xlTable.setDisplayName(table.getAttribute("name"));
