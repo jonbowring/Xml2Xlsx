@@ -491,9 +491,7 @@ public class AppXml2Xlsx {
 					// Initialise the target Excel cell and add the value
 					XSSFCell xlCell = xlRow.createCell(c);
 					
-					/*
-					XSSFCellStyle cellStyle = xlWorkbook.createCellStyle();
-					*/
+					
 					// If a cell style has been applied then add it to the cell
 					if(cell.hasAttribute("style")) {
 						
@@ -542,13 +540,13 @@ public class AppXml2Xlsx {
 								
 							}
 							
-							// Save the style to the cell
-							xlCell.setCellStyle(styleMap.get(cell.getAttribute("style")));
-							
 						} // End if cell has format
 						else {
 							xlCell.setCellValue(cellValue);
 						}
+						
+						// Save the style to the cell
+						xlCell.setCellStyle(styleMap.get(cell.getAttribute("style")));
 						
 					} // End if has style
 					else {
@@ -597,13 +595,7 @@ public class AppXml2Xlsx {
 								// If a formula has been defined
 								if(formula.length() > 0) {
 									
-									// Convert the formula to a named range
-									//XSSFName rangeName = xlWorkbook.createName();
-									//rangeName.setNameName(validation.getName());
-									//rangeName.setRefersToFormula(formula);
-									
 									// Build the validation
-									//XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint(validation.getName());
 									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint(formula);
 									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
 									
