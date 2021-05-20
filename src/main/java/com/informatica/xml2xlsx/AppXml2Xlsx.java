@@ -462,7 +462,23 @@ public class AppXml2Xlsx {
 			// Get all rows in the current worksheet and loop through them
 			NodeList rows = worksheet.getElementsByTagName("row");
 			int maxR = 0, maxC = 0;
+			Double complete = 0.0, total = (double) rows.getLength();
 			for(int r = 0; r < rows.getLength(); r++) {
+				
+				// Calculate the progress percentage
+				Double progress = (double) r + 1;
+				complete = (progress / total) * 100;
+				System.out.print("[");
+				for(int n = 0; n < 100; n++) {
+					if(n <= complete) {
+						System.out.print("=");
+					}
+					else {
+						System.out.print(" ");
+					}
+				}
+				System.out.print("]\r");
+				
 				
 				// Update the max row count
 				if(r > maxR) {
@@ -682,7 +698,7 @@ public class AppXml2Xlsx {
 				if(worksheet.getAttribute("autofilter").equals("true")) {
 					
 					if(worksheet.getElementsByTagName("table").getLength() > 0) {
-						System.out.println("Skipping worksheet autofilter. Worksheet has a table with autofilters already enabled.");
+						System.out.println("\nSkipping worksheet autofilter. Worksheet has a table with autofilters already enabled.");
 					}
 					else {
 						xlSheet.setAutoFilter(new CellRangeAddress(0, 0, 0, maxC));
@@ -719,7 +735,7 @@ public class AppXml2Xlsx {
 			
 		// Save and close the target Excel file
 		try (OutputStream fileOut = new FileOutputStream(tgt)) {
-		    System.out.println("Saving Excel file '" + tgt + "'...");
+		    System.out.println("\nSaving Excel file '" + tgt + "'...");
 			xlWorkbook.write(fileOut);
 		    xlWorkbook.close();
 		    System.out.println("File saved!");
