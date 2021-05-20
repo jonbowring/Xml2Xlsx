@@ -5,12 +5,12 @@ Xml2Xlsx is an executable jar that enables you to create Excel XLSX files using 
 
 ## Usage:
 ```
-java -jar Xml2Xlsx-[Version].jar --src [Source XML file] --tgt [Target Excel file]
+java -jar Xml2Xlsx-[Version].jar --src [Source XML file] --tgt [Target Excel file] --showProgress
 ```
 
 ### Example Usage:
 ```
-java -jar xml2xlsx-1.2.2.jar --src "books.xml" --tgt "books.xlsx"
+java -jar xml2xlsx-1.2.2.jar --src "books.xml" --tgt "books.xlsx" --showProgress
 ```
 
 ## Command Line Options:
@@ -18,6 +18,7 @@ Option|Description
 ------|-----------
 --src|Used to specify the location of the input XML file.
 --tgt|Used to specify the location of the output Excel file.
+--showProgress|Optional. Used to display a progress bar when writing rows to the target.
 
 ## XML Markup:
 ### Styles Markup:
