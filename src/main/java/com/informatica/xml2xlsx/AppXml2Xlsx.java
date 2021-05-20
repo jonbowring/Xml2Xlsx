@@ -51,6 +51,7 @@ public class AppXml2Xlsx {
 		HashMap<String, XSSFCellStyle> styleMap = new HashMap<String, XSSFCellStyle>();
 		HashMap<String, Validation> validationMap = new HashMap<String, Validation>();
 		StyleHelper styleHelper = new StyleHelper();
+		Boolean showProgress = false;
 		
 		// Parse the command line arguments
 		for(int p = 0; p < args.length; p++) {
@@ -62,6 +63,9 @@ public class AppXml2Xlsx {
 				case "--tgt":
 					tgt = args[p + 1];
 					p++;
+					break;
+				case "--showProgress":
+					showProgress = true;
 					break;
 				default:
 					break;
@@ -465,20 +469,22 @@ public class AppXml2Xlsx {
 			Double complete = 0.0, total = (double) rows.getLength();
 			for(int r = 0; r < rows.getLength(); r++) {
 				
-				// Calculate the progress percentage
-				Double progress = (double) r + 1;
-				complete = (progress / total) * 100;
-				System.out.print("[");
-				for(int n = 0; n < 100; n++) {
-					if(n <= complete) {
-						System.out.print("=");
+				// display the progress bar if the argument is passed
+				if(showProgress) {
+					// Calculate the progress percentage
+					Double progress = (double) r + 1;
+					complete = (progress / total) * 100;
+					System.out.print("[");
+					for(int n = 0; n < 100; n++) {
+						if(n <= complete) {
+							System.out.print("=");
+						}
+						else {
+							System.out.print(" ");
+						}
 					}
-					else {
-						System.out.print(" ");
-					}
+					System.out.print("] " + complete + "% (" + (r + 1) + "/" + rows.getLength() + ")\r");
 				}
-				System.out.print("] (" + (r + 1) + "/" + rows.getLength() + ")\r");
-				
 				
 				// Update the max row count
 				if(r > maxR) {
