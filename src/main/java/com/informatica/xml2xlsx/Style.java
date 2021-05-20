@@ -2,7 +2,6 @@ package com.informatica.xml2xlsx;
 
 import java.util.HashMap;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 

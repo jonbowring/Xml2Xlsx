@@ -530,11 +530,7 @@ public class AppXml2Xlsx {
 					if(cell.hasAttribute("style")) {
 						
 						// Apply the cell format if set
-						// Parse the styles
-						// TODO try changing this xpath search to see if it makes it any faster
-						//NodeList formats = (NodeList) xpath.evaluate("/workbook/styles/style[@name = '" + cell.getAttribute("style") + "']/format", doc, XPathConstants.NODESET);
 						StyleFormat styleFormat = styleFormatMap.get(cell.getAttribute("style"));
-						
 						if(styleFormat != null) {
 							
 							if(styleFormat.getType().length() > 0) {
