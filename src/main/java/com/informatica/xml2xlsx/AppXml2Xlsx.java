@@ -529,6 +529,38 @@ public class AppXml2Xlsx {
 							if(formatEl.hasAttribute("type")) {
 								
 								// Apply the cell data types
+								if(formatEl.getAttribute("type") == "formula") {
+									xlCell.setCellFormula(cellValue);
+								}
+								else if(formatEl.getAttribute("type") == "string") {
+									xlCell.setCellValue(cellValue);
+								}
+								else if(formatEl.getAttribute("type") == "int") {
+									int cellInt = Integer.parseInt(cellValue);
+									xlCell.setCellValue(cellInt);
+								}
+								else if(formatEl.getAttribute("type") == "float") {
+									Double cellDouble = Double.parseDouble(cellValue);
+									xlCell.setCellValue(cellDouble);
+								}
+								else if(formatEl.getAttribute("type") == "date") {
+									SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+									Date cellDate = fmt.parse(cellValue);
+									xlCell.setCellValue(cellDate);
+									if(formatEl.hasAttribute("pattern")) {
+										styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(formatEl.getAttribute("pattern")));
+									}
+									else {
+										styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
+									}
+								}
+								else {
+									xlCell.setCellValue(cellValue);
+								}
+								
+								
+							 // End data type switch
+								/*
 								switch(formatEl.getAttribute("type")) {
 									case "formula":
 										xlCell.setCellFormula(cellValue);
@@ -559,6 +591,7 @@ public class AppXml2Xlsx {
 										xlCell.setCellValue(cellValue);
 										break;
 								} // End data type switch
+								*/
 								
 							}
 							
