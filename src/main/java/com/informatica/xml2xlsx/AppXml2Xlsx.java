@@ -537,7 +537,7 @@ public class AppXml2Xlsx {
 								
 								switch(styleFormat.getType()) {
 									case "formula":
-										if(cellValue == null || cellValue == "") {
+										if(cellValue == null || cellValue.length() == 0) {
 											xlCell.setCellValue("");
 										}
 										else {
@@ -548,7 +548,7 @@ public class AppXml2Xlsx {
 										xlCell.setCellValue(cellValue);
 										break;
 									case "int":
-										if(cellValue == null || cellValue == "") {
+										if(cellValue == null || cellValue.length() == 0) {
 											xlCell.setCellValue("");
 										}
 										else {
@@ -557,7 +557,7 @@ public class AppXml2Xlsx {
 										}
 										break;
 									case "float":
-										if(cellValue == null || cellValue == "") {
+										if(cellValue == null || cellValue.length() == 0) {
 											xlCell.setCellValue("");
 										}
 										else {
@@ -566,7 +566,7 @@ public class AppXml2Xlsx {
 										}
 										break;
 									case "date":
-										if(cellValue == null || cellValue == "") {
+										if(cellValue == null || cellValue.length() == 0) {
 											xlCell.setCellValue("");
 										}
 										else {
