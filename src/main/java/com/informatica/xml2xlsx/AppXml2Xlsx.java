@@ -49,6 +49,7 @@ public class AppXml2Xlsx {
 		String src = "", 
 				tgt = "";
 		HashMap<String, XSSFCellStyle> styleMap = new HashMap<String, XSSFCellStyle>();
+		HashMap<String, StyleFormat> styleFormatMap = new HashMap<String, StyleFormat>();
 		HashMap<String, Validation> validationMap = new HashMap<String, Validation>();
 		StyleHelper styleHelper = new StyleHelper();
 		Boolean showProgress = false;
@@ -380,6 +381,17 @@ public class AppXml2Xlsx {
 					
 				} // End if has font element
 				
+				// Add the format styles if set
+				Element formatEl = (Element) styleEl.getElementsByTagName("format").item(0);
+				if(formatEl != null) {
+					if(formatEl.hasAttribute("type") && formatEl.hasAttribute("pattern")) {
+						styleFormatMap.put(styleName, new StyleFormat(formatEl.getAttribute("type"), formatEl.getAttribute("pattern")));
+					}
+					else if(formatEl.hasAttribute("type")) {
+						styleFormatMap.put(styleName, new StyleFormat(formatEl.getAttribute("type")));
+					}
+				}
+				
 				// Add the current style to the hash map
 				styleMap.put(styleName, cellStyle);
 				
@@ -519,49 +531,15 @@ public class AppXml2Xlsx {
 						
 						// Apply the cell format if set
 						// Parse the styles
-						NodeList formats = (NodeList) xpath.evaluate("/workbook/styles/style[@name = '" + cell.getAttribute("style") + "']/format", doc, XPathConstants.NODESET);
+						// TODO try changing this xpath search to see if it makes it any faster
+						//NodeList formats = (NodeList) xpath.evaluate("/workbook/styles/style[@name = '" + cell.getAttribute("style") + "']/format", doc, XPathConstants.NODESET);
+						StyleFormat styleFormat = styleFormatMap.get(cell.getAttribute("style"));
 						
-						
-						if(formats.getLength() > 0) {
+						if(styleFormat != null) {
 							
-							Element formatEl = (Element) formats.item(0);
-							
-							if(formatEl.hasAttribute("type")) {
+							if(styleFormat.getType().length() > 0) {
 								
-								// Apply the cell data types
-								if(formatEl.getAttribute("type") == "formula") {
-									xlCell.setCellFormula(cellValue);
-								}
-								else if(formatEl.getAttribute("type") == "string") {
-									xlCell.setCellValue(cellValue);
-								}
-								else if(formatEl.getAttribute("type") == "int") {
-									int cellInt = Integer.parseInt(cellValue);
-									xlCell.setCellValue(cellInt);
-								}
-								else if(formatEl.getAttribute("type") == "float") {
-									Double cellDouble = Double.parseDouble(cellValue);
-									xlCell.setCellValue(cellDouble);
-								}
-								else if(formatEl.getAttribute("type") == "date") {
-									SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-									Date cellDate = fmt.parse(cellValue);
-									xlCell.setCellValue(cellDate);
-									if(formatEl.hasAttribute("pattern")) {
-										styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(formatEl.getAttribute("pattern")));
-									}
-									else {
-										styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
-									}
-								}
-								else {
-									xlCell.setCellValue(cellValue);
-								}
-								
-								
-							 // End data type switch
-								/*
-								switch(formatEl.getAttribute("type")) {
+								switch(styleFormat.getType()) {
 									case "formula":
 										xlCell.setCellFormula(cellValue);
 										break;
@@ -580,8 +558,8 @@ public class AppXml2Xlsx {
 										SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 										Date cellDate = fmt.parse(cellValue);
 										xlCell.setCellValue(cellDate);
-										if(formatEl.hasAttribute("pattern")) {
-											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(formatEl.getAttribute("pattern")));
+										if(styleFormat.getPattern().length() > 0) {
+											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(styleFormat.getPattern()));
 										}
 										else {
 											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
@@ -591,7 +569,6 @@ public class AppXml2Xlsx {
 										xlCell.setCellValue(cellValue);
 										break;
 								} // End data type switch
-								*/
 								
 							}
 							
