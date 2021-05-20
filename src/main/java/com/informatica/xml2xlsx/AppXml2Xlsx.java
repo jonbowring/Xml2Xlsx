@@ -483,7 +483,7 @@ public class AppXml2Xlsx {
 							System.out.print(" ");
 						}
 					}
-					System.out.print("] " + complete + "% (" + (r + 1) + "/" + rows.getLength() + ")\r");
+					System.out.print("] " + Math.round(complete) + "% (" + (r + 1) + "/" + rows.getLength() + ")\r");
 				}
 				
 				// Update the max row count
