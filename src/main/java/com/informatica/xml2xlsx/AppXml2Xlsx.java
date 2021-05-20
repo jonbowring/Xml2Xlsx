@@ -537,28 +537,48 @@ public class AppXml2Xlsx {
 								
 								switch(styleFormat.getType()) {
 									case "formula":
-										xlCell.setCellFormula(cellValue);
+										if(cellValue == null || cellValue == "") {
+											xlCell.setCellValue("");
+										}
+										else {
+											xlCell.setCellFormula(cellValue);
+										}
 										break;
 									case "string":
 										xlCell.setCellValue(cellValue);
 										break;
 									case "int":
-										int cellInt = Integer.parseInt(cellValue);
-										xlCell.setCellValue(cellInt);
-										break;
-									case "float":
-										Double cellDouble = Double.parseDouble(cellValue);
-										xlCell.setCellValue(cellDouble);
-										break;
-									case "date":
-										SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-										Date cellDate = fmt.parse(cellValue);
-										xlCell.setCellValue(cellDate);
-										if(styleFormat.getPattern().length() > 0) {
-											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(styleFormat.getPattern()));
+										if(cellValue == null || cellValue == "") {
+											xlCell.setCellValue("");
 										}
 										else {
-											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
+											int cellInt = Integer.parseInt(cellValue);
+											xlCell.setCellValue(cellInt);
+										}
+										break;
+									case "float":
+										if(cellValue == null || cellValue == "") {
+											xlCell.setCellValue("");
+										}
+										else {
+											Double cellDouble = Double.parseDouble(cellValue);
+											xlCell.setCellValue(cellDouble);
+										}
+										break;
+									case "date":
+										if(cellValue == null || cellValue == "") {
+											xlCell.setCellValue("");
+										}
+										else {
+											SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+											Date cellDate = fmt.parse(cellValue);
+											xlCell.setCellValue(cellDate);
+											if(styleFormat.getPattern().length() > 0) {
+												styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(styleFormat.getPattern()));
+											}
+											else {
+												styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
+											}
 										}
 										break;
 									default:
