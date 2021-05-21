@@ -571,6 +571,25 @@ public class AppXml2Xlsx {
 											xlCell.setCellValue("");
 										}
 										else {
+											SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+											Date cellDate = fmt.parse(cellValue);
+											xlCell.setCellValue(cellDate);
+											
+											// If a custom date pattern is set then apply that
+											if(styleFormat.getPattern().length() > 0) {
+												styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(styleFormat.getPattern()));
+											}
+											// Else use the standard Excel date locale format
+											else {
+												styleMap.get(cell.getAttribute("style")).setDataFormat((short)14);
+											}
+										}
+										break;
+									case "datetime":
+										if(cellValue == null || cellValue.length() == 0) {
+											xlCell.setCellValue("");
+										}
+										else {
 											SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 											Date cellDate = fmt.parse(cellValue);
 											xlCell.setCellValue(cellDate);
