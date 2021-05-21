@@ -697,12 +697,21 @@ public class AppXml2Xlsx {
 			if(table != null) {
 				
 				// Set the area of the table using the max row and max col counts
-				AreaReference tableArea = xlWorkbook.getCreationHelper().createAreaReference(
-						new CellReference(0, 0), new CellReference(maxR, maxC));
+				AreaReference tableArea = null;
+				
+				// If there are rows available then set the area using the row count
+				if(maxR > 0) {
+					tableArea = xlWorkbook.getCreationHelper().createAreaReference(
+							new CellReference(0, 0), new CellReference(maxR, maxC));
+				}
+				// Else set the area with an empty row
+				else {
+					tableArea = xlWorkbook.getCreationHelper().createAreaReference(
+							new CellReference(0, 0), new CellReference(1, maxC));
+				}
+				
 				XSSFTable xlTable = xlSheet.createTable(tableArea);
 				xlTable.getCTTable().addNewAutoFilter().setRef(tableArea.formatAsString());
-				
-				
 				
 				if(table.hasAttribute("name")) {
 					xlTable.setName(table.getAttribute("name"));
