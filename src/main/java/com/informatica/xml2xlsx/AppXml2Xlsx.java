@@ -390,6 +390,7 @@ public class AppXml2Xlsx {
 					else if(formatEl.hasAttribute("type")) {
 						styleFormatMap.put(styleName, new StyleFormat(formatEl.getAttribute("type")));
 					}
+					
 				}
 				
 				// Add the current style to the hash map
@@ -573,11 +574,14 @@ public class AppXml2Xlsx {
 											SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 											Date cellDate = fmt.parse(cellValue);
 											xlCell.setCellValue(cellDate);
+											
+											// If a custom date pattern is set then apply that
 											if(styleFormat.getPattern().length() > 0) {
 												styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(styleFormat.getPattern()));
 											}
+											// Else use the standard Excel date locale format
 											else {
-												styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat("dd/MM/yyyy"));
+												styleMap.get(cell.getAttribute("style")).setDataFormat((short)14);
 											}
 										}
 										break;
