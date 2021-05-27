@@ -554,7 +554,7 @@ XPath|Description
 
 ### A Simple Workbook With A Hidden Worksheet:
 
-<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example1.png?raw=true" alt="A Simple Worksheet With Auto Filters"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example10.png?raw=true" alt="A Simple Workbook With A Hidden Worksheet"/>
 
 ```
 <workbook>
