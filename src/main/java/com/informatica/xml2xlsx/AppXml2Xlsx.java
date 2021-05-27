@@ -782,9 +782,25 @@ public class AppXml2Xlsx {
 				
 				if(worksheet.getAttribute("autofit").equals("true")) {
 					
-					for(int i = 0; i < maxC; i++) {
+					for(int i = 0; i <= maxC; i++) {
 						xlSheet.autoSizeColumn(i);
 					}
+					
+				}
+				
+			} // End if has autofit
+			
+			/*
+			 * Manage the worksheet visibility
+			 * --------------------------------------------
+			 */
+			
+			// Apply the worksheet visibility if set
+			if(worksheet.hasAttribute("hidden")) {
+				
+				if(worksheet.getAttribute("hidden").equals("true")) {
+					
+					xlWorkbook.setSheetHidden(xlWorkbook.getSheetIndex(sheetName), true);
 					
 				}
 				
