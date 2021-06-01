@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -23,6 +24,7 @@ import org.apache.poi.xssf.usermodel.DefaultIndexedColorMap;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
@@ -49,7 +51,7 @@ public class AppXml2Xlsx {
 		String src = "", 
 				tgt = "";
 		HashMap<String, XSSFCellStyle> styleMap = new HashMap<String, XSSFCellStyle>();
-		HashMap<String, StyleFormat> styleFormatMap = new HashMap<String, StyleFormat>();
+		HashMap<String, String> styleFormatMap = new HashMap<String, String>();
 		HashMap<String, Validation> validationMap = new HashMap<String, Validation>();
 		StyleHelper styleHelper = new StyleHelper();
 		Boolean showProgress = false;
@@ -108,6 +110,58 @@ public class AppXml2Xlsx {
 				Element styleEl = (Element) styles.item(y);
 				String styleName = styleEl.getAttribute("name");
 				XSSFCellStyle cellStyle = xlWorkbook.createCellStyle();
+				XSSFDataFormat dataFmt = xlWorkbook.createDataFormat();
+				
+				// If the format is set then apply it to the cell style
+				if(styleEl.getElementsByTagName("format").getLength() > 0 ) {
+					Element format = (Element) styleEl.getElementsByTagName("format").item(0);
+					
+					if(format.hasAttribute("type")) {
+						
+						switch(format.getAttribute("type")) {
+							case "formula":
+								// Do nothing
+								break;
+							case "string":
+								cellStyle.setDataFormat(dataFmt.getFormat("@"));
+								break;
+							case "int":
+								// Do nothing
+								break;
+							case "float":
+								// Do nothing
+								break;
+							case "date":
+								// If a custom date pattern is set then apply that
+								if(format.hasAttribute("pattern")) {
+									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(format.getAttribute("pattern")));
+								}
+								// Else use the standard Excel date locale format
+								else {
+									cellStyle.setDataFormat((short)14);
+								}
+								break;
+								
+							case "datetime":
+								if(format.hasAttribute("pattern")) {
+									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(format.getAttribute("pattern")));
+								}
+								// Else use the standard Excel date locale format
+								else {
+									cellStyle.setDataFormat((short)14);
+								}
+								break;
+								
+								
+							default:
+								// Do nothing
+								break;
+						} // End data type switch
+						
+					}
+				}
+				
+				
 				
 				// If the style has an attribute element
 				if(styleEl.getElementsByTagName("align").getLength() > 0 ) {
@@ -384,13 +438,9 @@ public class AppXml2Xlsx {
 				// Add the format styles if set
 				Element formatEl = (Element) styleEl.getElementsByTagName("format").item(0);
 				if(formatEl != null) {
-					if(formatEl.hasAttribute("type") && formatEl.hasAttribute("pattern")) {
-						styleFormatMap.put(styleName, new StyleFormat(formatEl.getAttribute("type"), formatEl.getAttribute("pattern")));
+					if(formatEl.hasAttribute("type")) {
+						styleFormatMap.put(styleName, formatEl.getAttribute("type"));
 					}
-					else if(formatEl.hasAttribute("type")) {
-						styleFormatMap.put(styleName, new StyleFormat(formatEl.getAttribute("type")));
-					}
-					
 				}
 				
 				// Add the current style to the hash map
@@ -531,12 +581,12 @@ public class AppXml2Xlsx {
 					if(cell.hasAttribute("style")) {
 						
 						// Apply the cell format if set
-						StyleFormat styleFormat = styleFormatMap.get(cell.getAttribute("style"));
+						String styleFormat = styleFormatMap.get(cell.getAttribute("style"));
 						if(styleFormat != null) {
 							
-							if(styleFormat.getType().length() > 0) {
+							if(styleFormat.length() > 0) {
 								
-								switch(styleFormat.getType()) {
+								switch(styleFormat) {
 									case "formula":
 										if(cellValue == null || cellValue.length() == 0) {
 											xlCell.setCellValue("");
@@ -577,14 +627,6 @@ public class AppXml2Xlsx {
 											
 										}
 										
-										// If a custom date pattern is set then apply that
-										if(styleFormat.getPattern().length() > 0) {
-											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(styleFormat.getPattern()));
-										}
-										// Else use the standard Excel date locale format
-										else {
-											styleMap.get(cell.getAttribute("style")).setDataFormat((short)14);
-										}
 										break;
 										
 									case "datetime":
@@ -596,15 +638,6 @@ public class AppXml2Xlsx {
 											Date cellDate = fmt.parse(cellValue);
 											xlCell.setCellValue(cellDate);
 											
-										}
-										
-										// If a custom date pattern is set then apply that
-										if(styleFormat.getPattern().length() > 0) {
-											styleMap.get(cell.getAttribute("style")).setDataFormat(xlHelper.createDataFormat().getFormat(styleFormat.getPattern()));
-										}
-										// Else use the standard Excel date locale format
-										else {
-											styleMap.get(cell.getAttribute("style")).setDataFormat((short)14);
 										}
 										
 										break;
