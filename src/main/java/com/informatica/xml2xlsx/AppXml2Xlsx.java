@@ -596,6 +596,58 @@ public class AppXml2Xlsx {
 			NodeList rows = worksheet.getElementsByTagName("row");
 			int maxR = 0, maxC = 0;
 			Double complete = 0.0, total = (double) rows.getLength();
+			
+			// If a table has been defined then initialise it
+			Element table = (Element) worksheet.getElementsByTagName("table").item(0);
+			XSSFTable xlTable = null;
+			if(table != null) {
+				
+				// Set the area of the table using the max row and max col counts
+				AreaReference tableArea = xlWorkbook.getCreationHelper().createAreaReference(
+						new CellReference(0, 0), new CellReference(1, 1));
+				
+				xlTable = xlSheet.createTable(tableArea);
+				xlTable.getCTTable().addNewAutoFilter().setRef(tableArea.formatAsString());
+				
+				if(table.hasAttribute("name")) {
+					xlTable.setName(table.getAttribute("name"));
+					xlTable.setDisplayName(table.getAttribute("name"));
+				}
+				
+				if(table.hasAttribute("style")) {
+					xlTable.getCTTable().addNewTableStyleInfo();
+					xlTable.getCTTable().getTableStyleInfo().setName(table.getAttribute("style"));
+					XSSFTableStyleInfo tableStyle = (XSSFTableStyleInfo) xlTable.getStyle();
+					tableStyle.setFirstColumn(false);
+					tableStyle.setLastColumn(false);
+					
+					if(table.hasAttribute("colStripes")) {
+						
+						if(table.getAttribute("colStripes").equals("true")) {
+							tableStyle.setShowColumnStripes(true);
+						}
+						else {
+							tableStyle.setShowColumnStripes(false);
+						}
+						
+					}
+					
+					if(table.hasAttribute("rowStripes")) {
+						
+						if(table.getAttribute("rowStripes").equals("true")) {
+							tableStyle.setShowRowStripes(true);
+						}
+						else {
+							tableStyle.setShowRowStripes(false);
+						}
+						
+					}
+					
+				} // End if table has style
+				
+			} // End if has table
+			
+			
 			for(int r = 0; r < rows.getLength(); r++) {
 				
 				// display the progress bar if the argument is passed
@@ -642,6 +694,10 @@ public class AppXml2Xlsx {
 					// Initialise the target Excel cell and add the value
 					XSSFCell xlCell = xlRow.createCell(c);
 					
+					// Add the column to the table if a table is in use
+					if(xlTable != null && r == 0) {
+						xlTable.createColumn(cellValue, c);
+					}
 					
 					// If a cell style has been applied then add it to the cell
 					if(cell.hasAttribute("style")) {
@@ -843,8 +899,7 @@ public class AppXml2Xlsx {
 			 * --------------------------------------------
 			 */
 			
-			// If a table has been defined then apply it to the sheet
-			Element table = (Element) worksheet.getElementsByTagName("table").item(0);
+			// If a table has been defined then update the range
 			if(table != null) {
 				
 				// Set the area of the table using the max row and max col counts
@@ -861,44 +916,8 @@ public class AppXml2Xlsx {
 							new CellReference(0, 0), new CellReference(1, maxC));
 				}
 				
-				XSSFTable xlTable = xlSheet.createTable(tableArea);
-				xlTable.getCTTable().addNewAutoFilter().setRef(tableArea.formatAsString());
+				xlTable.setArea(tableArea);
 				
-				if(table.hasAttribute("name")) {
-					xlTable.setName(table.getAttribute("name"));
-					xlTable.setDisplayName(table.getAttribute("name"));
-				}
-				
-				if(table.hasAttribute("style")) {
-					xlTable.getCTTable().addNewTableStyleInfo();
-					xlTable.getCTTable().getTableStyleInfo().setName(table.getAttribute("style"));
-					XSSFTableStyleInfo tableStyle = (XSSFTableStyleInfo) xlTable.getStyle();
-					tableStyle.setFirstColumn(false);
-					tableStyle.setLastColumn(false);
-					
-					if(table.hasAttribute("colStripes")) {
-						
-						if(table.getAttribute("colStripes").equals("true")) {
-							tableStyle.setShowColumnStripes(true);
-						}
-						else {
-							tableStyle.setShowColumnStripes(false);
-						}
-						
-					}
-					
-					if(table.hasAttribute("rowStripes")) {
-						
-						if(table.getAttribute("rowStripes").equals("true")) {
-							tableStyle.setShowRowStripes(true);
-						}
-						else {
-							tableStyle.setShowRowStripes(false);
-						}
-						
-					}
-					
-				} // End if table has style
 				
 			} // End if has table
 			
