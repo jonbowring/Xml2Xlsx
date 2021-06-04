@@ -165,10 +165,27 @@ public class AppXml2Xlsx {
 								cellStyle.setDataFormat(dataFmt.getFormat("@"));
 								break;
 							case "int":
-								// Do nothing
+								// If the thousands separator flag is set then use that
+								if(format.hasAttribute("separator")) {
+									if(format.getAttribute("separator").equals("true")) {
+										cellStyle.setDataFormat((short)3);
+									}
+								}
 								break;
 							case "float":
-								// Do nothing
+								// Apply the pattern only if set
+								if(format.hasAttribute("pattern")) {
+									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(format.getAttribute("pattern")));
+								}
+								// Else use the standard Excel format
+								else {
+									// If the thousands separator flag is set then use that
+									if(format.hasAttribute("separator")) {
+										if(format.getAttribute("separator").equals("true")) {
+											cellStyle.setDataFormat((short)4);
+										}
+									}
+								}
 								break;
 							case "date":
 								// If a custom date pattern is set then apply that
