@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.BorderStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -51,7 +50,7 @@ public class AppXml2Xlsx {
 		String src = "", 
 				tgt = "";
 		HashMap<String, XSSFCellStyle> styleMap = new HashMap<String, XSSFCellStyle>();
-		HashMap<String, String> styleFormatMap = new HashMap<String, String>();
+		HashMap<String, StyleFormat> styleFormatMap = new HashMap<String, StyleFormat>();
 		HashMap<String, Validation> validationMap = new HashMap<String, Validation>();
 		StyleHelper styleHelper = new StyleHelper();
 		Boolean showProgress = false;
@@ -171,6 +170,9 @@ public class AppXml2Xlsx {
 										cellStyle.setDataFormat((short)3);
 									}
 								}
+								else {
+									cellStyle.setDataFormat((short)1);
+								}
 								break;
 							case "float":
 								// Apply the pattern only if set
@@ -184,6 +186,9 @@ public class AppXml2Xlsx {
 										if(format.getAttribute("separator").equals("true")) {
 											cellStyle.setDataFormat((short)4);
 										}
+									}
+									else {
+										cellStyle.setDataFormat((short)2);
 									}
 								}
 								break;
@@ -495,7 +500,12 @@ public class AppXml2Xlsx {
 				Element formatEl = (Element) styleEl.getElementsByTagName("format").item(0);
 				if(formatEl != null) {
 					if(formatEl.hasAttribute("type")) {
-						styleFormatMap.put(styleName, formatEl.getAttribute("type"));
+						if(formatEl.hasAttribute("formula")) {
+							styleFormatMap.put(styleName, new StyleFormat( formatEl.getAttribute("type"), Boolean.parseBoolean(formatEl.getAttribute("formula"))));
+						}
+						else {
+							styleFormatMap.put(styleName, new StyleFormat( formatEl.getAttribute("type")));
+						}
 					}
 				}
 				
@@ -637,107 +647,118 @@ public class AppXml2Xlsx {
 					if(cell.hasAttribute("style")) {
 						
 						// Apply the cell format if set
-						String styleFormat = styleFormatMap.get(cell.getAttribute("style"));
+						String styleFormat = null;
+						if(styleFormatMap.containsKey(cell.getAttribute("style"))) {
+							styleFormat = styleFormatMap.get(cell.getAttribute("style")).getType();
+						}
+						
 						if(styleFormat != null) {
 							
 							if(styleFormat.length() > 0) {
 								
-								switch(styleFormat) {
-									case "currency":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											Double cellDouble = Double.parseDouble(cellValue);
-											xlCell.setCellValue(cellDouble);
-										}
+								// If the style is a formula then set the value as a formula
+								Boolean styleIsFormula = styleFormatMap.get(cell.getAttribute("style")).getIsFormula();
+								if(styleIsFormula) {
+									if(cellValue == null || cellValue.length() == 0) {
+										xlCell.setCellValue("");
+									}
+									else {
+										xlCell.setCellFormula(cellValue);
+									}
+								}
+								// Else set the value by the format type
+								else {
+									switch(styleFormat) {
+										case "currency":
+											if(cellValue == null || cellValue.length() == 0) {
+												xlCell.setCellValue("");
+											}
+											else {
+												Double cellDouble = Double.parseDouble(cellValue);
+												xlCell.setCellValue(cellDouble);
+											}
+											break;
+										case "scientific":
+											if(cellValue == null || cellValue.length() == 0) {
+												xlCell.setCellValue("");
+											}
+											else {
+												Double cellDouble = Double.parseDouble(cellValue);
+												xlCell.setCellValue(cellDouble);
+											}
+											break;
+										case "fraction":
+											if(cellValue == null || cellValue.length() == 0) {
+												xlCell.setCellValue("");
+											}
+											else {
+												Double cellDouble = Double.parseDouble(cellValue);
+												xlCell.setCellValue(cellDouble);
+											}
+											break;
+										case "percent":
+											if(cellValue == null || cellValue.length() == 0) {
+												xlCell.setCellValue("");
+											}
+											else {
+												Double cellDouble = Double.parseDouble(cellValue);
+												xlCell.setCellValue(cellDouble);
+											}
 										break;
-									case "scientific":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											Double cellDouble = Double.parseDouble(cellValue);
-											xlCell.setCellValue(cellDouble);
-										}
-										break;
-									case "fraction":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											Double cellDouble = Double.parseDouble(cellValue);
-											xlCell.setCellValue(cellDouble);
-										}
-										break;
-									case "percent":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											Double cellDouble = Double.parseDouble(cellValue);
-											xlCell.setCellValue(cellDouble);
-										}
-									break;
-									case "formula":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											xlCell.setCellFormula(cellValue);
-										}
-										break;
-									case "string":
-										xlCell.setCellValue(cellValue);
-										break;
-									case "int":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											int cellInt = Integer.parseInt(cellValue);
-											xlCell.setCellValue(cellInt);
-										}
-										break;
-									case "float":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											Double cellDouble = Double.parseDouble(cellValue);
-											xlCell.setCellValue(cellDouble);
-										}
-										break;
-									case "date":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-											Date cellDate = fmt.parse(cellValue);
-											xlCell.setCellValue(cellDate);
+										case "string":
+											xlCell.setCellValue(cellValue);
+											break;
+										case "int":
+											if(cellValue == null || cellValue.length() == 0) {
+												xlCell.setCellValue("");
+											}
+											else {
+												int cellInt = Integer.parseInt(cellValue);
+												xlCell.setCellValue(cellInt);
+											}
+											break;
+										case "float":
+											if(cellValue == null || cellValue.length() == 0) {
+												xlCell.setCellValue("");
+											}
+											else {
+												Double cellDouble = Double.parseDouble(cellValue);
+												xlCell.setCellValue(cellDouble);
+											}
+											break;
+										case "date":
+											if(cellValue == null || cellValue.length() == 0) {
+												xlCell.setCellValue("");
+											}
+											else {
+												SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+												Date cellDate = fmt.parse(cellValue);
+												xlCell.setCellValue(cellDate);
+												
+											}
 											
-										}
-										
-										break;
-										
-									case "datetime":
-										if(cellValue == null || cellValue.length() == 0) {
-											xlCell.setCellValue("");
-										}
-										else {
-											SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-											Date cellDate = fmt.parse(cellValue);
-											xlCell.setCellValue(cellDate);
+											break;
 											
-										}
-										
-										break;
-										
-									default:
-										xlCell.setCellValue(cellValue);
-										break;
-								} // End data type switch
+										case "datetime":
+											if(cellValue == null || cellValue.length() == 0) {
+												xlCell.setCellValue("");
+											}
+											else {
+												SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+												Date cellDate = fmt.parse(cellValue);
+												xlCell.setCellValue(cellDate);
+												
+											}
+											
+											break;
+											
+										default:
+											xlCell.setCellValue(cellValue);
+											break;
+									} // End data type switch
+								} // End else is not formula
+								
+								
 								
 							}
 							
