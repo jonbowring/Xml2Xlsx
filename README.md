@@ -44,7 +44,8 @@ XPath|Description
 /workbook/styles/style/font/strikeout|Optional. An empty element used as a flag to indicate if the font should have the strikeout styling applied.
 /workbook/styles/style/wrap|Optional. An empty element used as a flag to indicate text wrapping should be applied to the cell. If a cell contains newline characters represented as "\n" then this flag must be included for the newlines to be properly displayed.
 /workbook/styles/style/format|Optional. Used to define the data type and pattern format applied to the cell.
-/workbook/styles/style/format/@type|Mandatory. Used to specify the data type. Possible values include "currency", "date", "datetime", "float", "formula", "fraction", "int", "percent", "scientific" and "string". Note: when a cell uses the format "date" the XML value must be in the format "yyyy-MM-dd". When a cell uses the format "datetime" the XML value must be in the format "yyyy-MM-dd hh:mm:ss".
+/workbook/styles/style/format/@type|Mandatory. Used to specify the data type. Possible values include "currency", "date", "datetime", "float", "fraction", "int", "percent", "scientific" and "string". Note: when a cell uses the format "date" the XML value must be in the format "yyyy-MM-dd". When a cell uses the format "datetime" the XML value must be in the format "yyyy-MM-dd hh:mm:ss".
+/workbook/styles/style/format/@formula|Optional. Used to indicate if the cell value should be treated as a formula. Possible values include "true" or "false".
 /workbook/styles/style/format/@pattern|Optional. If @type is specified as a "currency", "date", "datetime" or "percent" then this attribute can be used to define a custom Excel pattern (e.g. "dd/MM/yyyy"). If the pattern is not included then it will default to the Excel default format.
 /workbook/styles/style/format/@separator|Optional. If @type is specified as a "float" or "int" then this attribute can be set to "true" to include the thousands separator.
 
