@@ -119,6 +119,12 @@ public class AppXml2Xlsx {
 					if(format.hasAttribute("type")) {
 						
 						switch(format.getAttribute("type")) {
+							case "percent":
+								// Apply the % pattern only if set
+								if(format.hasAttribute("pattern")) {
+									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(format.getAttribute("pattern")));
+								}
+								break;
 							case "formula":
 								// Do nothing
 								break;
@@ -587,6 +593,15 @@ public class AppXml2Xlsx {
 							if(styleFormat.length() > 0) {
 								
 								switch(styleFormat) {
+									case "percent":
+										if(cellValue == null || cellValue.length() == 0) {
+											xlCell.setCellValue("");
+										}
+										else {
+											Double cellDouble = Double.parseDouble(cellValue);
+											xlCell.setCellValue(cellDouble);
+										}
+									break;
 									case "formula":
 										if(cellValue == null || cellValue.length() == 0) {
 											xlCell.setCellValue("");
