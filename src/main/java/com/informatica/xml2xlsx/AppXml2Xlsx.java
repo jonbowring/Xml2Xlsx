@@ -118,7 +118,46 @@ public class AppXml2Xlsx {
 					
 					if(format.hasAttribute("type")) {
 						
+						// 1 = Number, no decimal places, no thousand separator
+						// 2 = Number, 2 decimal places, no thousand separator
+						// 3 = Number, 0 decimal places, with thousand separator
+						// 4 = Number, 2 decimal places, with thousand separator
+						// 5 = Currency, 0 decimal places, locale settings
+						// 7 = Currency, 2 decimal places, locale settings
+						// 9 = Percentage, 0 decimal places
+						// 10 = Percentage, 2 decimal places
+						// 11 = Scientific, 2 decimal places
+						// 12 = Fraction up to one digit (1/4)
+						// 13 = Fraction up to two digits (25/26)
+						// 14 = Date locale
+						
 						switch(format.getAttribute("type")) {
+							case "percent":
+								// Apply the pattern only if set
+								if(format.hasAttribute("pattern")) {
+									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(format.getAttribute("pattern")));
+								}
+								// Else use the standard Excel format
+								else {
+									cellStyle.setDataFormat((short)10);
+								}
+								break;
+							case "currency":
+								// Apply the pattern only if set
+								if(format.hasAttribute("pattern")) {
+									cellStyle.setDataFormat(xlHelper.createDataFormat().getFormat(format.getAttribute("pattern")));
+								}
+								// Else use the standard Excel format
+								else {
+									cellStyle.setDataFormat((short)7);
+								}
+								break;
+							case "scientific":
+								cellStyle.setDataFormat((short)11);
+								break;
+							case "fraction":
+								cellStyle.setDataFormat((short)12);
+								break;
 							case "formula":
 								// Do nothing
 								break;
@@ -587,6 +626,42 @@ public class AppXml2Xlsx {
 							if(styleFormat.length() > 0) {
 								
 								switch(styleFormat) {
+									case "currency":
+										if(cellValue == null || cellValue.length() == 0) {
+											xlCell.setCellValue("");
+										}
+										else {
+											Double cellDouble = Double.parseDouble(cellValue);
+											xlCell.setCellValue(cellDouble);
+										}
+										break;
+									case "scientific":
+										if(cellValue == null || cellValue.length() == 0) {
+											xlCell.setCellValue("");
+										}
+										else {
+											Double cellDouble = Double.parseDouble(cellValue);
+											xlCell.setCellValue(cellDouble);
+										}
+										break;
+									case "fraction":
+										if(cellValue == null || cellValue.length() == 0) {
+											xlCell.setCellValue("");
+										}
+										else {
+											Double cellDouble = Double.parseDouble(cellValue);
+											xlCell.setCellValue(cellDouble);
+										}
+										break;
+									case "percent":
+										if(cellValue == null || cellValue.length() == 0) {
+											xlCell.setCellValue("");
+										}
+										else {
+											Double cellDouble = Double.parseDouble(cellValue);
+											xlCell.setCellValue(cellDouble);
+										}
+									break;
 									case "formula":
 										if(cellValue == null || cellValue.length() == 0) {
 											xlCell.setCellValue("");
