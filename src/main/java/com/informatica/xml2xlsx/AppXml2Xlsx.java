@@ -12,6 +12,7 @@ import java.util.Date;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.AreaReference;
@@ -454,6 +455,8 @@ public class AppXml2Xlsx {
 					String fontColour = fontEl.getAttribute("colour");
 					Element fontItalic = (Element) fontEl.getElementsByTagName("italic").item(0);
 					Element fontStrike = (Element) fontEl.getElementsByTagName("strikeout").item(0);
+					Element fontBold = (Element) fontEl.getElementsByTagName("bold").item(0);
+					Element fontUnderline = (Element) fontEl.getElementsByTagName("underline").item(0);
 					
 					// Set the font name if set
 					if(fontName.length() > 0) {
@@ -489,6 +492,16 @@ public class AppXml2Xlsx {
 					// Set the font strikeout if set
 					if(fontStrike != null) {
 						font.setStrikeout(true);
+					}
+					
+					// Set the font bold if set
+					if(fontBold != null) {
+						font.setBold(true);
+					}
+					
+					// Set the font underline if set
+					if(fontUnderline != null) {
+						font.setUnderline(FontUnderline.SINGLE);
 					}
 					
 					// Save the font
