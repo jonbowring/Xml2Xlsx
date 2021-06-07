@@ -610,6 +610,24 @@ public class AppXml2Xlsx {
 			int maxR = 0, maxC = 0;
 			Double complete = 0.0, total = (double) rows.getLength();
 			
+			// Get any column settings for the current worksheet
+			NodeList cols = worksheet.getElementsByTagName("column");
+			ArrayList<Integer> ignoreAutoFit = new ArrayList<Integer>();
+			for(int w = 0; w < cols.getLength(); w++) {
+				
+				// Get the current column
+				Element col = (Element) cols.item(w);
+				
+				// If the width attribute is set then set the width and add it to the map to be ignored by auto fit
+				if(col.hasAttribute("index") && col.hasAttribute("width")) {
+					int colIndex = Integer.parseInt(col.getAttribute("index"));
+					int colWidth = Integer.parseInt(col.getAttribute("width"));
+					xlSheet.setColumnWidth(colIndex, colWidth);
+					ignoreAutoFit.add(colIndex);
+				}
+			}
+			
+			
 			// If a table has been defined then initialise it
 			Element table = (Element) worksheet.getElementsByTagName("table").item(0);
 			XSSFTable xlTable = null;
@@ -966,7 +984,12 @@ public class AppXml2Xlsx {
 				if(worksheet.getAttribute("autofit").equals("true")) {
 					
 					for(int i = 0; i <= maxC; i++) {
-						xlSheet.autoSizeColumn(i);
+						
+						// Auto fit the column as long as it is not in the ignore auto fit list
+						if(!ignoreAutoFit.contains(i)) {
+							xlSheet.autoSizeColumn(i);
+						}
+						
 					}
 					
 				}
