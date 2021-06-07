@@ -68,6 +68,7 @@ XPath|Description
 /workbook/worksheet/@name|Mandatory. The name of the worksheet tab.
 /workbook/worksheet/@autofilter|Optional. Used to define if auto filters should be applied to the first row in the worksheet. This option is ignored if a table has been defined for the worksheet as auto filters are automatically applied to tables. Possible values are "true" or "false".
 /workbook/worksheet/@autofit|Optional. Used to define if the columns for the worksheet should automatically be resized to fit the contents. Possible values are "true" or "false".
+/workbook/worksheet/@gridlines|Optional. Used to define if gridlines are displayed for the worksheet. Possible values are "true" or "false".
 /workbook/worksheet/@hidden|Optional. Used to set the visibility of the worksheet. IMPORTANT: There must always e at least one worksheet visible. Possible values are "true" or "false".
 /workbook/worksheet/columns|Optional. Used to define settings for columns within a worksheet.
 /workbook/worksheet/column|Mandatory. Used to define column level settings if needed.

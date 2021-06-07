@@ -605,6 +605,17 @@ public class AppXml2Xlsx {
 			XSSFSheet xlSheet = xlWorkbook.createSheet(sheetName);
 			XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(xlSheet);
 			
+			// If the gridlines flag is set then add it to the worksheet
+			if(worksheet.hasAttribute("gridlines")) {
+				Boolean gridlines = Boolean.parseBoolean(worksheet.getAttribute("gridlines"));
+				if(gridlines) {
+					xlSheet.setDisplayGridlines(true);
+				}
+				else {
+					xlSheet.setDisplayGridlines(false);
+				}
+			}
+			
 			// Get all rows in the current worksheet and loop through them
 			NodeList rows = worksheet.getElementsByTagName("row");
 			int maxR = 0, maxC = 0;
