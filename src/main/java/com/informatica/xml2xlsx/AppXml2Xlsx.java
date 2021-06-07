@@ -1043,9 +1043,24 @@ public class AppXml2Xlsx {
 		// Sort the tab positions
 		if(tabOrder.size() > 0) {
 			tabOrder = sortByValue(tabOrder);
+			int t = 0;
 			for(Map.Entry<String, Integer> entry : tabOrder.entrySet()) {
+				
+				// Remove any default tab selection
+				xlWorkbook.getSheet(entry.getKey()).setSelected(false);
+				
 				if(entry.getValue() >= 0) {
+					
+					// Set the tab order
 					xlWorkbook.setSheetOrder(entry.getKey(), entry.getValue());
+					
+					// Select the first tab
+					if(t == 0) {
+						xlWorkbook.setSelectedTab(xlWorkbook.getSheetIndex(entry.getKey()));
+						xlWorkbook.setActiveSheet(xlWorkbook.getSheetIndex(entry.getKey()));
+					}
+					
+					t++;
 				}
 			}
 		}
