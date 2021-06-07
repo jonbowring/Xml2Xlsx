@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -38,7 +40,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class AppXml2Xlsx {
 
@@ -53,6 +58,7 @@ public class AppXml2Xlsx {
 		HashMap<String, XSSFCellStyle> styleMap = new HashMap<String, XSSFCellStyle>();
 		HashMap<String, StyleFormat> styleFormatMap = new HashMap<String, StyleFormat>();
 		HashMap<String, Validation> validationMap = new HashMap<String, Validation>();
+		HashMap<String, Integer> tabOrder = new HashMap<String, Integer>();
 		StyleHelper styleHelper = new StyleHelper();
 		Boolean showProgress = false;
 		
@@ -605,6 +611,15 @@ public class AppXml2Xlsx {
 			XSSFSheet xlSheet = xlWorkbook.createSheet(sheetName);
 			XSSFDataValidationHelper dvHelper = new XSSFDataValidationHelper(xlSheet);
 			
+			// If the worksheet order is set then update the workbook order
+			if(worksheet.hasAttribute("order")) {
+				Integer order = Integer.parseInt(worksheet.getAttribute("order"));
+				tabOrder.put(sheetName, order);
+			}
+			else {
+				tabOrder.put(sheetName, -1);
+			}
+			
 			// If the gridlines flag is set then add it to the worksheet
 			if(worksheet.hasAttribute("gridlines")) {
 				Boolean gridlines = Boolean.parseBoolean(worksheet.getAttribute("gridlines"));
@@ -1025,6 +1040,16 @@ public class AppXml2Xlsx {
 			
 		} // End of worksheets loop
 		
+		// Sort the tab positions
+		if(tabOrder.size() > 0) {
+			tabOrder = sortByValue(tabOrder);
+			for(Map.Entry<String, Integer> entry : tabOrder.entrySet()) {
+				if(entry.getValue() >= 0) {
+					xlWorkbook.setSheetOrder(entry.getKey(), entry.getValue());
+				}
+			}
+		}
+		
 		/*
 		 * Save the excel file
 		 * --------------------------------------------
@@ -1039,5 +1064,29 @@ public class AppXml2Xlsx {
 		}
 
 	} // End main
+	
+	// function to sort hashmap by values
+    public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm)
+    {
+        // Create a list from elements of HashMap
+        List<Map.Entry<String, Integer> > list =
+               new LinkedList<Map.Entry<String, Integer> >(hm.entrySet());
+ 
+        // Sort the list
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer> >() {
+            public int compare(Map.Entry<String, Integer> o1,
+                               Map.Entry<String, Integer> o2)
+            {
+                return (o1.getValue()).compareTo(o2.getValue());
+            }
+        });
+         
+        // put data from sorted list to hashmap
+        HashMap<String, Integer> temp = new LinkedHashMap<String, Integer>();
+        for (Map.Entry<String, Integer> aa : list) {
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
+    }
 
 }
