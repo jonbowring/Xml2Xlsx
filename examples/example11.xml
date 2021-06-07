@@ -1,0 +1,40 @@
+<workbook>
+	<worksheet name="Books">
+		<columns>
+			<column index="0" width="2000"/>
+			<column index="1" width="4000"/>
+			<column index="2" width="6000"/>
+			<column index="3" width="8000"/>
+		</columns>
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell>Everyday Italian</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell>2005</cell>
+			<cell>30.00</cell>
+		</row>
+		<row>
+			<cell>Harry Potter</cell>
+			<cell>J K. Rowling</cell>
+			<cell>2005</cell>
+			<cell>29.99</cell>
+		</row>
+		<row>
+			<cell>XQuery Kick Start</cell>
+			<cell>Vaidyanathan Nagarajan</cell>
+			<cell>2003</cell>
+			<cell>49.99</cell>
+		</row>
+		<row>
+			<cell>Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell>2003</cell>
+			<cell>39.95</cell>
+		</row>
+	</worksheet>
+</workbook>

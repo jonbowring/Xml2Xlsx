@@ -69,6 +69,10 @@ XPath|Description
 /workbook/worksheet/@autofilter|Optional. Used to define if auto filters should be applied to the first row in the worksheet. This option is ignored if a table has been defined for the worksheet as auto filters are automatically applied to tables. Possible values are "true" or "false".
 /workbook/worksheet/@autofit|Optional. Used to define if the columns for the worksheet should automatically be resized to fit the contents. Possible values are "true" or "false".
 /workbook/worksheet/@hidden|Optional. Used to set the visibility of the worksheet. IMPORTANT: There must always e at least one worksheet visible. Possible values are "true" or "false".
+/workbook/worksheet/columns|Optional. Used to define settings for columns within a worksheet.
+/workbook/worksheet/column|Mandatory. Used to define column level settings if needed.
+/workbook/worksheet/column/@index|Mandatory. The index of the column for the settings to be applied to. The first column has an index of 0.
+/workbook/worksheet/column/@width|Optional. Sets the width (in units of 1/256th of a character width).
 /workbook/worksheet/table|Optional. Used to define if the worksheet data should be contained within a table.
 /workbook/worksheet/table/@name|Mandatory. The name for the table. The name can only contain numbers, letters and underscores.
 /workbook/worksheet/table/@colStripes|Optional. Used to specify if column colour striping should be applied. Possible values include "true" and "false".
@@ -600,6 +604,53 @@ XPath|Description
 	<worksheet name="Secret" hidden="true">
 		<row>
 			<cell>This worksheet is not visible.</cell>
+		</row>
+	</worksheet>
+</workbook>
+```
+
+### A Simple Workbook Defined Column Widths:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example11.png?raw=true" alt="A Simple Workbook Defined Column Widths"/>
+
+```
+<workbook>
+	<worksheet name="Books">
+		<columns>
+			<column index="0" width="2000"/>
+			<column index="1" width="4000"/>
+			<column index="2" width="6000"/>
+			<column index="3" width="8000"/>
+		</columns>
+		<row>
+			<cell>Title</cell>
+			<cell>Author</cell>
+			<cell>Year</cell>
+			<cell>Price</cell>
+		</row>
+		<row>
+			<cell>Everyday Italian</cell>
+			<cell>Giada De Laurentiis</cell>
+			<cell>2005</cell>
+			<cell>30.00</cell>
+		</row>
+		<row>
+			<cell>Harry Potter</cell>
+			<cell>J K. Rowling</cell>
+			<cell>2005</cell>
+			<cell>29.99</cell>
+		</row>
+		<row>
+			<cell>XQuery Kick Start</cell>
+			<cell>Vaidyanathan Nagarajan</cell>
+			<cell>2003</cell>
+			<cell>49.99</cell>
+		</row>
+		<row>
+			<cell>Learning XML</cell>
+			<cell>Erik T. Ray</cell>
+			<cell>2003</cell>
+			<cell>39.95</cell>
 		</row>
 	</worksheet>
 </workbook>
