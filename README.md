@@ -70,6 +70,7 @@ XPath|Description
 /workbook/worksheet/@autofit|Optional. Used to define if the columns for the worksheet should automatically be resized to fit the contents. Possible values are "true" or "false".
 /workbook/worksheet/@gridlines|Optional. Used to define if gridlines are displayed for the worksheet. Possible values are "true" or "false".
 /workbook/worksheet/@hidden|Optional. Used to set the visibility of the worksheet. IMPORTANT: There must always e at least one worksheet visible. Possible values are "true" or "false".
+/workbook/worksheet/@order|Optional. The index of the position for the worksheet tab to be displayed. The first tab has an index of 0.
 /workbook/worksheet/columns|Optional. Used to define settings for columns within a worksheet.
 /workbook/worksheet/column|Mandatory. Used to define column level settings if needed.
 /workbook/worksheet/column/@index|Mandatory. The index of the column for the settings to be applied to. The first column has an index of 0.
