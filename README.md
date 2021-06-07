@@ -44,7 +44,7 @@ XPath|Description
 /workbook/styles/style/font/strikeout|Optional. An empty element used as a flag to indicate if the font should have the strikeout styling applied.
 /workbook/styles/style/wrap|Optional. An empty element used as a flag to indicate text wrapping should be applied to the cell. If a cell contains newline characters represented as "\n" then this flag must be included for the newlines to be properly displayed.
 /workbook/styles/style/format|Optional. Used to define the data type and pattern format applied to the cell.
-/workbook/styles/style/format/@type|Mandatory. Used to specify the data type. Possible values include "currency", "date", "datetime", "float", "fraction", "int", "percent", "scientific" and "string". Note: when a cell uses the format "date" the XML value must be in the format "yyyy-MM-dd". When a cell uses the format "datetime" the XML value must be in the format "yyyy-MM-dd hh:mm:ss".
+/workbook/styles/style/format/@type|Mandatory. Used to specify the data type. Possible values include "currency", "date", "datetime", "float", "fraction", "general", "int", "percent", "scientific" and "string". Note: when a cell uses the format "date" the XML value must be in the format "yyyy-MM-dd". When a cell uses the format "datetime" the XML value must be in the format "yyyy-MM-dd hh:mm:ss".
 /workbook/styles/style/format/@formula|Optional. Used to indicate if the cell value should be treated as a formula. Possible values include "true" or "false".
 /workbook/styles/style/format/@pattern|Optional. If @type is specified as a "currency", "date", "datetime" or "percent" then this attribute can be used to define a custom Excel pattern (e.g. "dd/MM/yyyy"). If the pattern is not included then it will default to the Excel default format.
 /workbook/styles/style/format/@separator|Optional. If @type is specified as a "float" or "int" then this attribute can be set to "true" to include the thousands separator.
@@ -176,8 +176,11 @@ XPath|Description
 ```
 <workbook>
 	<styles>
-		<style name="myFormula">
-			<format type="formula"/>
+		<style name="myStringFormula">
+			<format type="string" formula="true"/>
+		</style>
+		<style name="myFloatFormula">
+			<format type="float" formula="true"/>
 		</style>
 	</styles>
 	<worksheet name="Books" autofilter="true">
@@ -193,28 +196,28 @@ XPath|Description
 			<cell>Giada De Laurentiis</cell>
 			<cell>2005</cell>
 			<cell>30.00</cell>
-			<cell style="myFormula">A2&amp;" - "&amp;B2</cell>
+			<cell style="myStringFormula">A2&amp;" - "&amp;B2</cell>
 		</row>
 		<row>
 			<cell>Harry Potter</cell>
 			<cell>J K. Rowling</cell>
 			<cell>2005</cell>
 			<cell>29.99</cell>
-			<cell style="myFormula">C2 * D2</cell>
+			<cell style="myFloatFormula">C2 * D2</cell>
 		</row>
 		<row>
 			<cell>XQuery Kick Start</cell>
 			<cell>Vaidyanathan Nagarajan</cell>
 			<cell>2003</cell>
 			<cell>49.99</cell>
-			<cell style="myFormula">upper(A2)</cell>
+			<cell style="myStringFormula">upper(A2)</cell>
 		</row>
 		<row>
 			<cell>Learning XML</cell>
 			<cell>Erik T. Ray</cell>
 			<cell>2003</cell>
 			<cell>39.95</cell>
-			<cell style="myFormula">lower(B2)</cell>
+			<cell style="myStringFormula">lower(B2)</cell>
 		</row>
 	</worksheet>
 </workbook>
