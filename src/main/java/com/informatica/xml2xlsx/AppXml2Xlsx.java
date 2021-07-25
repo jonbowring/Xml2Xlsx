@@ -12,8 +12,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
+import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -31,6 +33,7 @@ import org.apache.poi.xssf.usermodel.XSSFDataValidation;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationConstraint;
 import org.apache.poi.xssf.usermodel.XSSFDataValidationHelper;
 import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFTable;
@@ -1038,7 +1041,108 @@ public class AppXml2Xlsx {
 				
 			} // End if has autofit
 			
+			/*
+			 * Manage the pivot tables
+			 * --------------------------------------------
+			 */
+			
+			// Get all pivots in the workbook and loop trhough them
+			NodeList pivots = worksheet.getElementsByTagName("pivot");
+			for(int p = 0; p < pivots.getLength(); p++) {
+				
+				// Get the current pivot table
+				Element pivot = (Element) pivots.item(p);
+				
+				// Get the pivot table properties
+				String location = pivot.getAttribute("location");
+				String dataArea = pivot.getAttribute("dataArea");
+				String dataSheet = pivot.getAttribute("dataSheet");
+				
+				// Initialise the pivot table
+				XSSFPivotTable pivotTable = xlSheet.createPivotTable(new AreaReference(dataArea, SpreadsheetVersion.EXCEL2007), 
+						new CellReference(location),
+						xlWorkbook.getSheet(dataSheet));
+				
+				// Add the columns to be used for grouping
+				Element groupby = (Element) pivot.getElementsByTagName("groupby").item(0);
+				NodeList groupbyCols = groupby.getElementsByTagName("column");
+				for(int gc = 0; gc < groupbyCols.getLength(); gc++) {
+				
+					// Get the column number
+					Element groupbyCol = (Element) groupbyCols.item(gc);
+					int colNum = Integer.parseInt(groupbyCol.getAttribute("number"));
+					
+					// Add the column to the row labels
+					pivotTable.addRowLabel(colNum);
+					
+				}
+				
+				// Add the columns to be used for calculation
+				Element agg = (Element) pivot.getElementsByTagName("aggregate").item(0);
+				NodeList aggCols = agg.getElementsByTagName("column");
+				for(int ac = 0; ac < aggCols.getLength(); ac++) {
+				
+					// Get the column number
+					Element aggCol = (Element) aggCols.item(ac);
+					int colNum = Integer.parseInt(aggCol.getAttribute("number"));
+					String colAction = aggCol.getAttribute("action");
+					
+					// Add the column to the calculation
+					switch(colAction) {
+						case "AVERAGE":
+							pivotTable.addColumnLabel(DataConsolidateFunction.AVERAGE, colNum);
+							break;
+						case "COUNT":
+							pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, colNum);
+							break;
+						case "COUNT_NUMS":
+							pivotTable.addColumnLabel(DataConsolidateFunction.COUNT_NUMS, colNum);
+							break;
+						case "MAX":
+							pivotTable.addColumnLabel(DataConsolidateFunction.MAX, colNum);
+							break;
+						case "MIN":
+							pivotTable.addColumnLabel(DataConsolidateFunction.MIN, colNum);
+							break;
+						case "PRODUCT":
+							pivotTable.addColumnLabel(DataConsolidateFunction.PRODUCT, colNum);
+							break;
+						case "STD_DEV":
+							pivotTable.addColumnLabel(DataConsolidateFunction.STD_DEV, colNum);
+							break;
+						case "STD_DEVP":
+							pivotTable.addColumnLabel(DataConsolidateFunction.STD_DEVP, colNum);
+							break;
+						case "SUM":
+							pivotTable.addColumnLabel(DataConsolidateFunction.SUM, colNum);
+							break;
+						case "VAR":
+							pivotTable.addColumnLabel(DataConsolidateFunction.VAR, colNum);
+							break;
+						case "VARP":
+							pivotTable.addColumnLabel(DataConsolidateFunction.VARP, colNum);
+							break;
+						default:
+							pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, colNum);
+							break;
+					}
+					
+					
+				}
+				
+				
+				// TODO add a filter
+				
+			} // End of pivots loop
+			
 		} // End of worksheets loop
+		
+		
+		
+		/*
+		 * Manage the tab order
+		 * --------------------------------------------
+		 */
 		
 		// Sort the tab positions
 		if(tabOrder.size() > 0) {
