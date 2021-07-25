@@ -1059,9 +1059,18 @@ public class AppXml2Xlsx {
 				String dataSheet = pivot.getAttribute("dataSheet");
 				
 				// Initialise the pivot table
-				XSSFPivotTable pivotTable = xlSheet.createPivotTable(new AreaReference(dataArea, SpreadsheetVersion.EXCEL2007), 
-						new CellReference(location),
-						xlWorkbook.getSheet(dataSheet));
+				XSSFPivotTable pivotTable = null;
+				if(pivot.hasAttribute("dataTable")) {
+					pivotTable = xlSheet.createPivotTable(xlWorkbook.getTable(pivot.getAttribute("dataTable")).getArea(), 
+							new CellReference(location),
+							xlWorkbook.getSheet(dataSheet));
+				}
+				else {
+					pivotTable = xlSheet.createPivotTable(new AreaReference(dataArea, SpreadsheetVersion.EXCEL2007), 
+							new CellReference(location),
+							xlWorkbook.getSheet(dataSheet));
+				}
+				
 				
 				// Add the columns to be used for grouping
 				Element groupby = (Element) pivot.getElementsByTagName("groupby").item(0);
@@ -1070,12 +1079,12 @@ public class AppXml2Xlsx {
 				
 					// Get the column number
 					Element groupbyCol = (Element) groupbyCols.item(gc);
-					int colNum = Integer.parseInt(groupbyCol.getAttribute("number"));
+					int colIdx = Integer.parseInt(groupbyCol.getAttribute("index"));
 					
 					// Add the column to the row labels
-					pivotTable.addRowLabel(colNum);
+					pivotTable.addRowLabel(colIdx);
 					
-				}
+				} // End of grouby loop
 				
 				// Add the columns to be used for calculation
 				Element agg = (Element) pivot.getElementsByTagName("aggregate").item(0);
@@ -1084,51 +1093,130 @@ public class AppXml2Xlsx {
 				
 					// Get the column number
 					Element aggCol = (Element) aggCols.item(ac);
-					int colNum = Integer.parseInt(aggCol.getAttribute("number"));
+					int colIdx = Integer.parseInt(aggCol.getAttribute("index"));
 					String colAction = aggCol.getAttribute("action");
+					
+					
+					// TODO add validation logic that the aggregate does not include one of the groupby or filter cols
 					
 					// Add the column to the calculation
 					switch(colAction) {
 						case "AVERAGE":
-							pivotTable.addColumnLabel(DataConsolidateFunction.AVERAGE, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.AVERAGE, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.AVERAGE, colIdx);
+							}
 							break;
 						case "COUNT":
-							pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, colIdx);
+							}
 							break;
 						case "COUNT_NUMS":
-							pivotTable.addColumnLabel(DataConsolidateFunction.COUNT_NUMS, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.COUNT_NUMS, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.COUNT_NUMS, colIdx);
+							}
 							break;
 						case "MAX":
-							pivotTable.addColumnLabel(DataConsolidateFunction.MAX, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.MAX, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.MAX, colIdx);
+							}
 							break;
 						case "MIN":
-							pivotTable.addColumnLabel(DataConsolidateFunction.MIN, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.MIN, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.MIN, colIdx);
+							}
 							break;
 						case "PRODUCT":
-							pivotTable.addColumnLabel(DataConsolidateFunction.PRODUCT, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.PRODUCT, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.PRODUCT, colIdx);
+							}
 							break;
 						case "STD_DEV":
-							pivotTable.addColumnLabel(DataConsolidateFunction.STD_DEV, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.STD_DEV, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.STD_DEV, colIdx);
+							}
 							break;
 						case "STD_DEVP":
-							pivotTable.addColumnLabel(DataConsolidateFunction.STD_DEVP, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.STD_DEVP, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.STD_DEVP, colIdx);
+							}
 							break;
 						case "SUM":
-							pivotTable.addColumnLabel(DataConsolidateFunction.SUM, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.SUM, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.SUM, colIdx);
+							}
 							break;
 						case "VAR":
-							pivotTable.addColumnLabel(DataConsolidateFunction.VAR, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.VAR, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.VAR, colIdx);
+							}
 							break;
 						case "VARP":
-							pivotTable.addColumnLabel(DataConsolidateFunction.VARP, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.VARP, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.VARP, colIdx);
+							}
 							break;
 						default:
-							pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, colNum);
+							if(aggCol.hasAttribute("name")) {
+								pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, colIdx, aggCol.getAttribute("name"));
+							}
+							else {
+								pivotTable.addColumnLabel(DataConsolidateFunction.COUNT, colIdx);
+							}
 							break;
 					}
 					
 					
-				}
+				} // End of aggregate loop
+				
+				// Add the columns to be used for grouping
+				Element filter = (Element) pivot.getElementsByTagName("filter").item(0);
+				NodeList filterCols = filter.getElementsByTagName("column");
+				for(int fc = 0; fc < filterCols.getLength(); fc++) {
+				
+					// Get the column number
+					Element filterCol = (Element) filterCols.item(fc);
+					int colIdx = Integer.parseInt(filterCol.getAttribute("index"));
+					
+					// TODO add validation logic that the filter does not include one of the groupby or aggregate cols
+					
+					// Add the column to the filter
+					pivotTable.addReportFilter(colIdx);
+					
+				} // End of filter loop
 				
 				
 				// TODO add a filter
