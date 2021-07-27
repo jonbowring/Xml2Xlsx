@@ -1,0 +1,49 @@
+<workbook>
+	<styles>
+		<style name="myInt">
+			<format type="int"/>
+		</style>
+	</styles>
+	<worksheet name="Books">
+		<table name="My_Table" colStripes="false" rowStripes="true" style="TableStyleMedium3"/>
+		<row>
+			<cell>Group1</cell>
+			<cell>Group2</cell>
+			<cell>Year</cell>
+		</row>
+		<row>
+			<cell>FOO</cell>
+			<cell>BAR</cell>
+			<cell style="myInt">2005</cell>
+		</row>
+		<row>
+			<cell>FOO</cell>
+			<cell>BAR</cell>
+			<cell style="myInt">2021</cell>
+		</row>
+		<row>
+			<cell>Cat</cell>
+			<cell>Mouse</cell>
+			<cell style="myInt">2005</cell>
+		</row>
+		<row>
+			<cell>Cat</cell>
+			<cell>Mouse</cell>
+			<cell style="myInt">2006</cell>
+		</row>
+	</worksheet>
+	<worksheet name="Summary">
+		<pivot location="A1" dataSheet="Books" dataTable="My_Table">
+			<groupby>
+				<column index="0"/>
+			</groupby>
+			<aggregate>
+				<column index="2" action="SUM" name="Sum_Year"/>
+				<column index="2" action="COUNT" name="Count_Year"/>
+			</aggregate>
+			<filter>
+				<column index="1"/>
+			</filter>
+		</pivot>
+	</worksheet>
+</workbook>

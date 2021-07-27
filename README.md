@@ -84,6 +84,23 @@ XPath|Description
 /workbook/worksheet/row/cell|Mandatory. Used to specify a cell of data to be added to the Excel file. Maximum number of cells or columns that can be included is 16,384.
 /workbook/worksheet/row/cell/@style|Optional. The name of the re-usable style to be applied to the cell.
 /workbook/worksheet/row/cell/@validation|Optional. The name of the re-usable validation to be applied to the cell.
+/workbook/worksheet/pivot|Optional. Used to define if a worksheet should include a pivot table.
+/workbook/worksheet/pivot/@location|Mandatory. Defines the top left cell for positioning the pivot table (e.g. "A1").
+/workbook/worksheet/pivot/@dataSheet|Mandatory. Defines the worksheet name that contains the data the pivot table will refer to.
+/workbook/worksheet/pivot/@dataArea|Mandatory if NOT using table data. Defines the area reference for the data that the pivot table will refer to (e.g. "A1:C5").
+/workbook/worksheet/pivot/@dataTable|Mandatory if using table data. Defines the table reference using the table name for the data that the pivot table will refer to (e.g. "My_Table").
+/workbook/worksheet/groupby|Mandatory. Contains the columns that will be used for grouping in the pivot table.
+/workbook/worksheet/groupby/column|Mandatory - one or more. The column that will be used for grouping in the pivot table.
+/workbook/worksheet/groupby/column/@index|Mandatory. The zero based index of the column to be used for grouping in the pivot table.
+/workbook/worksheet/aggregate|Mandatory. Contains the columns that will be used for aggregating in the pivot table.
+/workbook/worksheet/aggregate/column|Mandatory - one or more. The column that will be used for aggregating in the pivot table.
+/workbook/worksheet/aggregate/column/@index|Mandatory. The zero based index of the column to be used for aggregating in the pivot table.
+/workbook/worksheet/aggregate/column/@action|Mandatory. The aggregate function to be performed on the column. Possible functions include: "AVERAGE", "COUNT", "COUNT_NUMS", "MAX", "MIN", "PRODUCT", "STD_DEV", "STD_DEVP", "SUM", "VAR" and "VARP".
+/workbook/worksheet/aggregate/column/@name|Optional. If needed you can specify a custom name for the column using this attribute.
+/workbook/worksheet/filter|Optional. Contains the columns that will be used for filtering in the pivot table.
+/workbook/worksheet/filter/column|Mandatory - one or more. The column that will be used for filtering in the pivot table.
+/workbook/worksheet/filter/column/@index|Mandatory. The zero based index of the column to be used for filtering in the pivot table.
+
 
 
 ## Examples:
@@ -654,6 +671,119 @@ XPath|Description
 			<cell>2003</cell>
 			<cell>39.95</cell>
 		</row>
+	</worksheet>
+</workbook>
+```
+
+### A Simple Pivot Table Using an Area Reference:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example12-1.png?raw=true" alt="A Simple Pivot Table Using an Area Reference"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example12-2.png?raw=true" alt="A Simple Pivot Table Using an Area Reference"/>
+
+```
+<workbook>
+	<styles>
+		<style name="myInt">
+			<format type="int"/>
+		</style>
+	</styles>
+	<worksheet name="Books" autofilter="true">
+		<row>
+			<cell>Group1</cell>
+			<cell>Group2</cell>
+			<cell>Year</cell>
+		</row>
+		<row>
+			<cell>FOO</cell>
+			<cell>BAR</cell>
+			<cell style="myInt">2005</cell>
+		</row>
+		<row>
+			<cell>FOO</cell>
+			<cell>BAR</cell>
+			<cell style="myInt">2021</cell>
+		</row>
+		<row>
+			<cell>Cat</cell>
+			<cell>Mouse</cell>
+			<cell style="myInt">2005</cell>
+		</row>
+		<row>
+			<cell>Cat</cell>
+			<cell>Mouse</cell>
+			<cell style="myInt">2006</cell>
+		</row>
+	</worksheet>
+	<worksheet name="Summary">
+		<pivot location="A1" dataSheet="Books" dataArea="A1:C5">
+			<groupby>
+				<column index="0"/>
+			</groupby>
+			<aggregate>
+				<column index="2" action="SUM" name="Sum_Year"/>
+				<column index="2" action="COUNT" name="Count_Year"/>
+			</aggregate>
+			<filter>
+				<column index="1"/>
+			</filter>
+		</pivot>
+	</worksheet>
+</workbook>
+```
+
+### A Simple Pivot Table Using a Table Reference:
+
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example13-1.png?raw=true" alt="A Simple Pivot Table Using a Table Reference"/>
+<img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example13-2.png?raw=true" alt="A Simple Pivot Table Using a Table Reference"/>
+
+```
+<workbook>
+	<styles>
+		<style name="myInt">
+			<format type="int"/>
+		</style>
+	</styles>
+	<worksheet name="Books">
+		<table name="My_Table" colStripes="false" rowStripes="true" style="TableStyleMedium3"/>
+		<row>
+			<cell>Group1</cell>
+			<cell>Group2</cell>
+			<cell>Year</cell>
+		</row>
+		<row>
+			<cell>FOO</cell>
+			<cell>BAR</cell>
+			<cell style="myInt">2005</cell>
+		</row>
+		<row>
+			<cell>FOO</cell>
+			<cell>BAR</cell>
+			<cell style="myInt">2021</cell>
+		</row>
+		<row>
+			<cell>Cat</cell>
+			<cell>Mouse</cell>
+			<cell style="myInt">2005</cell>
+		</row>
+		<row>
+			<cell>Cat</cell>
+			<cell>Mouse</cell>
+			<cell style="myInt">2006</cell>
+		</row>
+	</worksheet>
+	<worksheet name="Summary">
+		<pivot location="A1" dataSheet="Books" dataTable="My_Table">
+			<groupby>
+				<column index="0"/>
+			</groupby>
+			<aggregate>
+				<column index="2" action="SUM" name="Sum_Year"/>
+				<column index="2" action="COUNT" name="Count_Year"/>
+			</aggregate>
+			<filter>
+				<column index="1"/>
+			</filter>
+		</pivot>
 	</worksheet>
 </workbook>
 ```
