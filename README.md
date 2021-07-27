@@ -89,17 +89,17 @@ XPath|Description
 /workbook/worksheet/pivot/@dataSheet|Mandatory. Defines the worksheet name that contains the data the pivot table will refer to.
 /workbook/worksheet/pivot/@dataArea|Mandatory if NOT using table data. Defines the area reference for the data that the pivot table will refer to (e.g. "A1:C5").
 /workbook/worksheet/pivot/@dataTable|Mandatory if using table data. Defines the table reference using the table name for the data that the pivot table will refer to (e.g. "My_Table").
-/workbook/worksheet/groupby|Mandatory. Contains the columns that will be used for grouping in the pivot table.
-/workbook/worksheet/groupby/column|Mandatory - one or more. The column that will be used for grouping in the pivot table.
-/workbook/worksheet/groupby/column/@index|Mandatory. The zero based index of the column to be used for grouping in the pivot table.
-/workbook/worksheet/aggregate|Mandatory. Contains the columns that will be used for aggregating in the pivot table.
-/workbook/worksheet/aggregate/column|Mandatory - one or more. The column that will be used for aggregating in the pivot table.
-/workbook/worksheet/aggregate/column/@index|Mandatory. The zero based index of the column to be used for aggregating in the pivot table.
-/workbook/worksheet/aggregate/column/@action|Mandatory. The aggregate function to be performed on the column. Possible functions include: "AVERAGE", "COUNT", "COUNT_NUMS", "MAX", "MIN", "PRODUCT", "STD_DEV", "STD_DEVP", "SUM", "VAR" and "VARP".
-/workbook/worksheet/aggregate/column/@name|Optional. If needed you can specify a custom name for the column using this attribute.
-/workbook/worksheet/filter|Optional. Contains the columns that will be used for filtering in the pivot table.
-/workbook/worksheet/filter/column|Mandatory - one or more. The column that will be used for filtering in the pivot table.
-/workbook/worksheet/filter/column/@index|Mandatory. The zero based index of the column to be used for filtering in the pivot table.
+/workbook/worksheet/pivot/groupby|Mandatory. Contains the columns that will be used for grouping in the pivot table.
+/workbook/worksheet/pivot/groupby/column|Mandatory - one or more. The column that will be used for grouping in the pivot table.
+/workbook/worksheet/pivot/groupby/column/@index|Mandatory. The zero based index of the column to be used for grouping in the pivot table.
+/workbook/worksheet/pivot/aggregate|Mandatory. Contains the columns that will be used for aggregating in the pivot table.
+/workbook/worksheet/pivot/aggregate/column|Mandatory - one or more. The column that will be used for aggregating in the pivot table.
+/workbook/worksheet/pivot/aggregate/column/@index|Mandatory. The zero based index of the column to be used for aggregating in the pivot table.
+/workbook/worksheet/pivot/aggregate/column/@action|Mandatory. The aggregate function to be performed on the column. Possible functions include: "AVERAGE", "COUNT", "COUNT_NUMS", "MAX", "MIN", "PRODUCT", "STD_DEV", "STD_DEVP", "SUM", "VAR" and "VARP".
+/workbook/worksheet/pivot/aggregate/column/@name|Optional. If needed you can specify a custom name for the column using this attribute.
+/workbook/worksheet/pivot/filter|Optional. Contains the columns that will be used for filtering in the pivot table.
+/workbook/worksheet/pivot/filter/column|Mandatory - one or more. The column that will be used for filtering in the pivot table.
+/workbook/worksheet/pivot/filter/column/@index|Mandatory. The zero based index of the column to be used for filtering in the pivot table.
 
 
 
