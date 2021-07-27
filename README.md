@@ -108,7 +108,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example1.png?raw=true" alt="A Simple Worksheet With Auto Filters"/>
 
-```
+```XML
 <workbook>
 	<worksheet name="Books" autofilter="true">
 		<row>
@@ -149,7 +149,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example2.png?raw=true" alt="Cell Data Types"/>
 
-```
+```XML
 <workbook>
 	<styles>
 		<style name="myInt">
@@ -198,7 +198,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example3.png?raw=true" alt="Formulas"/>
 
-```
+```XML
 <workbook>
 	<styles>
 		<style name="myStringFormula">
@@ -252,7 +252,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example4.png?raw=true" alt="Basic Table"/>
 
-```
+```XML
 <workbook>
 	<worksheet name="Books" autofilter="true">
 		<table name="My_Table" colStripes="false" rowStripes="true" style="TableStyleMedium3"/>
@@ -294,7 +294,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example5.png?raw=true" alt="Cell Borders"/>
 
-```
+```XML
 <workbook>
 	<styles>
 		<style name="myBorders">
@@ -343,7 +343,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example6.png?raw=true" alt="Fonts"/>
 
-```
+```XML
 <workbook>
 	<styles>
 		<style name="myFont">
@@ -392,7 +392,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example7.png?raw=true" alt="Fonts"/>
 
-```
+```XML
 <workbook>
 	<styles>
 		<style name="myFill">
@@ -438,7 +438,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example8.png?raw=true" alt="Fonts"/>
 
-```
+```XML
 <workbook>
 	<validations>
 		<validation name="my_validation1">
@@ -493,7 +493,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example9.png?raw=true" alt="Fonts"/>
 
-```
+```XML
 <workbook>
 	<styles>
 		<style name="top_left">
@@ -586,7 +586,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example10.png?raw=true" alt="A Simple Workbook With A Hidden Worksheet"/>
 
-```
+```XML
 <workbook>
 	<worksheet name="Books">
 		<row>
@@ -632,7 +632,7 @@ XPath|Description
 
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example11.png?raw=true" alt="A Simple Workbook Defined Column Widths"/>
 
-```
+```XML
 <workbook>
 	<worksheet name="Books">
 		<columns>
@@ -680,7 +680,7 @@ XPath|Description
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example12-1.png?raw=true" alt="A Simple Pivot Table Using an Area Reference"/>
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example12-2.png?raw=true" alt="A Simple Pivot Table Using an Area Reference"/>
 
-```
+```XML
 <workbook>
 	<styles>
 		<style name="myInt">
@@ -736,7 +736,7 @@ XPath|Description
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example13-1.png?raw=true" alt="A Simple Pivot Table Using a Table Reference"/>
 <img src="https://github.com/jonbowring/Xml2Xlsx/blob/main/examples/example13-2.png?raw=true" alt="A Simple Pivot Table Using a Table Reference"/>
 
-```
+```XML
 <workbook>
 	<styles>
 		<style name="myInt">
