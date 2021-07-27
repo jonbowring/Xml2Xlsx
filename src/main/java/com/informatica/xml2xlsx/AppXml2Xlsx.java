@@ -1112,9 +1112,7 @@ public class AppXml2Xlsx {
 					int colIdx = Integer.parseInt(aggCol.getAttribute("index"));
 					String colAction = aggCol.getAttribute("action");
 					
-					
-					// TODO add validation logic that the aggregate does not include one of the groupby or filter cols
-					
+										
 					// Add the column to the calculation
 					switch(colAction) {
 						case "AVERAGE":
@@ -1227,15 +1225,10 @@ public class AppXml2Xlsx {
 					Element filterCol = (Element) filterCols.item(fc);
 					int colIdx = Integer.parseInt(filterCol.getAttribute("index"));
 					
-					// TODO add validation logic that the filter does not include one of the groupby or aggregate cols
-					
 					// Add the column to the filter
 					pivotTable.addReportFilter(colIdx);
 					
 				} // End of filter loop
-				
-				
-				// TODO add a filter
 				
 			} // End of pivots loop
 			

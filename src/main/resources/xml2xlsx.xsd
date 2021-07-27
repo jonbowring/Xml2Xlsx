@@ -7,7 +7,23 @@
 			<xs:pattern value="[A-Za-z0-9_]+"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
+	<xs:simpleType name="aggActionType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AVERAGE"/>
+			<xs:enumeration value="COUNT"/>
+			<xs:enumeration value="COUNT_NUMS"/>
+			<xs:enumeration value="MAX"/>
+			<xs:enumeration value="MIN"/>
+			<xs:enumeration value="PRODUCT"/>
+			<xs:enumeration value="STD_DEV"/>
+			<xs:enumeration value="STD_DEVP"/>
+			<xs:enumeration value="SUM"/>
+			<xs:enumeration value="VAR"/>
+			<xs:enumeration value="VARP"/>
+		</xs:restriction>
+	</xs:simpleType>
+
 	<xs:simpleType name="tableStyleType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="TableStyleDark1"/>
@@ -71,7 +87,7 @@
 			<xs:enumeration value="TableStyleMedium28"/>
 		</xs:restriction>
 	</xs:simpleType>
-	
+
 	<xs:simpleType name="formatType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="formula"/>
@@ -79,6 +95,10 @@
 			<xs:enumeration value="int"/>
 			<xs:enumeration value="float"/>
 			<xs:enumeration value="date"/>
+			<xs:enumeration value="currency"/>
+			<xs:enumeration value="fraction"/>
+			<xs:enumeration value="percent"/>
+			<xs:enumeration value="scientific"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -215,10 +235,12 @@
 										<xs:element name="font" minOccurs="0" maxOccurs="1">
 											<xs:complexType>
 												<xs:sequence>
+													<xs:element type="xs:string" name="bold" minOccurs="0" maxOccurs="1"/>
 													<xs:element type="xs:string" name="italic" minOccurs="0" maxOccurs="1"/>
 													<xs:element type="xs:string" name="strikeout" minOccurs="0" maxOccurs="1"/>
+													<xs:element type="xs:string" name="underline" minOccurs="0" maxOccurs="1"/>
 												</xs:sequence>
-												<xs:attribute type="xs:string" name="name" use="required"/>
+												<xs:attribute type="xs:string" name="name" use="optional"/>
 												<xs:attribute type="xs:int" name="size" use="optional"/>
 												<xs:attribute type="colourType" name="colour" use="optional"/>
 											</xs:complexType>
@@ -229,8 +251,9 @@
 												<xs:simpleContent>
 													<xs:extension base="xs:string">
 														<xs:attribute type="formatType" name="type" use="required"/>
-														<!-- If type is date then pattern should be populated -->
+														<xs:attribute type="strBoolType" name="formula" use="optional"/>
 														<xs:attribute type="xs:string" name="pattern" use="optional"/>
+														<xs:attribute type="strBoolType" name="separator" use="optional"/>
 													</xs:extension>
 												</xs:simpleContent>
 											</xs:complexType>
@@ -267,9 +290,26 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
+
 				<xs:element name="worksheet" minOccurs="1" maxOccurs="255">
 					<xs:complexType>
 						<xs:sequence>
+							<xs:element name="columns" minOccurs="0" maxOccurs="1">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="column" minOccurs="1" maxOccurs="16384">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute type="xs:int" name="index" use="optional"/>
+														<xs:attribute type="xs:int" name="width" use="optional"/>
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
 							<xs:element name="table" minOccurs="0" maxOccurs="1">
 								<xs:complexType>
 									<xs:simpleContent>
@@ -282,7 +322,7 @@
 									</xs:simpleContent>
 								</xs:complexType>
 							</xs:element>
-							<xs:element name="row" minOccurs="1" maxOccurs="1048576">
+							<xs:element name="row" minOccurs="0" maxOccurs="1048576">
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="cell" minOccurs="1" maxOccurs="16384">
@@ -298,9 +338,69 @@
 									</xs:sequence>
 								</xs:complexType>
 							</xs:element>
+							<xs:element name="pivot" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="groupby" minOccurs="1" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="column" minOccurs="1" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute type="xs:int" name="index" use="required"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="aggregate" minOccurs="1" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="column" minOccurs="1" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute type="xs:int" name="index" use="required"/>
+																	<xs:attribute type="aggActionType" name="action" use="required"/>
+																	<xs:attribute type="xs:string" name="name" use="optional"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="filter" minOccurs="0" maxOccurs="1">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="column" minOccurs="1" maxOccurs="unbounded">
+														<xs:complexType>
+															<xs:simpleContent>
+																<xs:extension base="xs:string">
+																	<xs:attribute type="xs:int" name="index" use="required"/>
+																</xs:extension>
+															</xs:simpleContent>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute type="xs:string" name="location" use="required"/>
+									<xs:attribute type="xs:string" name="dataSheet" use="required"/>
+									<xs:attribute type="xs:string" name="dataArea" use="optional"/>
+									<xs:attribute type="xs:string" name="dataTable" use="optional"/>
+								</xs:complexType>
+							</xs:element>
 						</xs:sequence>
 						<xs:attribute type="xs:string" name="name" use="required"/>
-						<xs:attribute type="xs:string" name="autofilter" use="optional"/>
+						<xs:attribute type="strBoolType" name="autofilter" use="optional"/>
+						<xs:attribute type="strBoolType" name="autofit" use="optional"/>
+						<xs:attribute type="strBoolType" name="gridlines" use="optional"/>
+						<xs:attribute type="strBoolType" name="hidden" use="optional"/>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
