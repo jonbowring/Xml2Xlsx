@@ -8,6 +8,19 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+	<xs:simpleType name="lengthOperatorType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EQUAL"/>
+			<xs:enumeration value="NOT_EQUAL"/>
+			<xs:enumeration value="GREATER_THAN"/>
+			<xs:enumeration value="GREATER_OR_EQUAL"/>
+			<xs:enumeration value="LESS_THAN"/>
+			<xs:enumeration value="LESS_OR_EQUAL"/>
+			<xs:enumeration value="BETWEEN"/>
+			<xs:enumeration value="NOT_BETWEEN"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
 	<xs:simpleType name="aggActionType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="AVERAGE"/>
@@ -113,6 +126,7 @@
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="fixed-list"/>
 			<xs:enumeration value="formula-list"/>
+			<xs:enumeration value="length"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -280,8 +294,11 @@
 												</xs:sequence>
 											</xs:complexType>
 										</xs:element>
-										<!-- Mandatory if type is formula-list -->
 										<xs:element type="xs:string" name="formula" minOccurs="0" maxOccurs="1"/>
+										<xs:element type="lengthOperatorType" name="operator" minOccurs="0" maxOccurs="1"/>
+										<xs:element type="xs:int" name="value" minOccurs="0" maxOccurs="1"/>
+										<xs:element type="xs:int" name="min" minOccurs="0" maxOccurs="1"/>
+										<xs:element type="xs:int" name="max" minOccurs="0" maxOccurs="1"/>
 									</xs:sequence>
 									<!-- Name must be made up of letters, numbers and underscores only -->
 									<xs:attribute type="nameType" name="name" use="required"/>
