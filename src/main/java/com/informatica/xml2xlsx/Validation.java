@@ -7,6 +7,7 @@ public class Validation {
 	 */
 	
 	private String name, formula, type;
+	private int lengthMin, lengthMax, lengthValue, operator;
 	private String[] values;
 	
 	/*
@@ -18,6 +19,10 @@ public class Validation {
 		this.formula = "";
 		this.type = type;
 		this.values = null;
+		this.operator = -1;
+		this.lengthValue = -1;
+		this.lengthMin = -1;
+		this.lengthMax = -1;
 	}
 	
 	/*
@@ -40,6 +45,22 @@ public class Validation {
 		return this.values;
 	}
 	
+	public int getOperator() {
+		return this.operator;
+	}
+	
+	public int getLengthMin() {
+		return this.lengthMin;
+	}
+	
+	public int getLengthMax() {
+		return this.lengthMax;
+	}
+	
+	public int getLengthValue() {
+		return this.lengthValue;
+	}
+	
 	/*
 	 * Setters
 	 */
@@ -58,6 +79,22 @@ public class Validation {
 	
 	public void setValues(String[] values) {
 		this.values = values;
+	}
+	
+	public void setOperator(int operator) {
+		this.operator = operator;
+	}
+	
+	public void setLengthMin(int lengthMin) {
+		this.lengthMin = lengthMin;
+	}
+	
+	public void setLengthMax(int lengthMax) {
+		this.lengthMax = lengthMax;
+	}
+	
+	public void setLengthValue(int lengthValue) {
+		this.lengthValue = lengthValue;
 	}
 	
 }
