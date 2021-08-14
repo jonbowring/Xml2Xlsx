@@ -32,6 +32,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.DataConsolidateFunction;
+import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
@@ -581,6 +582,67 @@ public class AppXml2Xlsx {
 					validation.setFormula(formulaEl.getTextContent());
 				}
 				
+				// If it is a length validation type
+				if(validationType.equals("length")) {
+					
+					// If set get the operator and add it to the validation
+					Element operatorEl = (Element) validationEl.getElementsByTagName("operator").item(0);
+					if(operatorEl != null) {
+						
+						switch(operatorEl.getTextContent()) {
+							case "EQUAL":
+								validation.setOperator(OperatorType.EQUAL);
+								break;
+							case "GREATER_OR_EQUAL":
+								validation.setOperator(OperatorType.GREATER_OR_EQUAL);
+								break;
+							case "LESS_OR_EQUAL":
+								validation.setOperator(OperatorType.LESS_OR_EQUAL);
+								break;
+							case "GREATER_THAN":
+								validation.setOperator(OperatorType.GREATER_THAN);
+								break;
+							case "LESS_THAN":
+								validation.setOperator(OperatorType.LESS_THAN);
+								break;
+							case "NOT_EQUAL":
+								validation.setOperator(OperatorType.NOT_EQUAL);
+								break;
+							case "BETWEEN":
+								validation.setOperator(OperatorType.BETWEEN);
+								break;
+							case "NOT_BETWEEN":
+								validation.setOperator(OperatorType.NOT_BETWEEN);
+								break;
+							default:
+								// do something
+								break;
+						} // End of operator swicth statement
+						
+					} // End if operator element is not null
+					
+					// If set get and set the length value
+					Element lengthValueEl = (Element) validationEl.getElementsByTagName("value").item(0);
+					if(lengthValueEl != null) {
+						validation.setLengthValue(Integer.parseInt(lengthValueEl.getTextContent()));
+					}
+					
+					// If set get and set the length min value
+					Element lengthMinValueEl = (Element) validationEl.getElementsByTagName("min").item(0);
+					if(lengthMinValueEl != null) {
+						validation.setLengthMin(Integer.parseInt(lengthMinValueEl.getTextContent()));
+					}
+					
+					// If set get and set the length max value
+					Element lengthMaxValueEl = (Element) validationEl.getElementsByTagName("max").item(0);
+					if(lengthMaxValueEl != null) {
+						validation.setLengthMax(Integer.parseInt(lengthMaxValueEl.getTextContent()));
+					}
+					
+				} // End if length validation
+				
+				
+				
 				// If set get the list of validation values
 				Element valuesArrEl = (Element) validationEl.getElementsByTagName("values").item(0);
 				if(valuesArrEl != null) {
@@ -951,6 +1013,43 @@ public class AppXml2Xlsx {
 									
 									// Build the validation
 									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createFormulaListConstraint(formula);
+									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
+									
+								}
+								
+							} // End if formula list
+							
+							// Else if the type uses a length validation
+							else if(validation.getType().equals("length")) {
+								
+								// Get the operator and length values
+								int operator = validation.getOperator();
+								int lengthValue = validation.getLengthValue();
+								int lengthMin = validation.getLengthMin();
+								int lengthMax = validation.getLengthMax();
+								
+								// If the operation only requires a single value
+								if((operator == OperatorType.EQUAL || 
+										operator == OperatorType.GREATER_OR_EQUAL || 
+										operator == OperatorType.GREATER_THAN || 
+										operator == OperatorType.LESS_OR_EQUAL || 
+										operator == OperatorType.LESS_THAN || 
+										operator == OperatorType.NOT_EQUAL) && 
+										lengthValue > -1) {
+									
+									// Build the validation
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createTextLengthConstraint(operator, Integer.toString(lengthValue), null);
+									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
+									
+								}
+								// If the operation requires two values
+								else if((operator == OperatorType.BETWEEN || 
+										operator == OperatorType.NOT_BETWEEN) && 
+										lengthMin > -1 &&
+										lengthMax > -1) {
+									
+									// Build the validation
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createTextLengthConstraint(operator, Integer.toString(lengthMin), Integer.toString(lengthMax));
 									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
 									
 								}
