@@ -60,6 +60,7 @@ XPath|Description
 /workbook/validations/validation/value|Mandatory if type is set to "length" and the "operator" is either "EQUAL", "NOT_EQUAL", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_THAN" or "LESS_OR_EQUAL". Used to determine the length value for the validation to be applied.
 /workbook/validations/validation/min|Mandatory if type is set to "length" and the "operator" is either "BETWEEN" or "NOT_BETWEEN". Used to determine the minimum length value for the validation to be applied.
 /workbook/validations/validation/max|Mandatory if type is set to "length" and the "operator" is either "BETWEEN" or "NOT_BETWEEN". Used to determine the maximum length value for the validation to be applied.
+/workbook/validations/validation/operator|Mandatory if type is set to "length". Possible length operations include "EQUAL", "NOT_EQUAL", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_THAN", "LESS_OR_EQUAL", "BETWEEN" and "NOT_BETWEEN".
 /workbook/validations/validation/values|Mandatory if type is set to "fixed-list".
 /workbook/validations/validation/values/value|Mandatory. One or more values to be used in the data validation.
 /workbook/validations/validation/formula|Mandatory if type is set to "formula-list". Can be specified using Excel style reference formulas, including other tabs. For example "'Books'!$B$2:$B$5".
