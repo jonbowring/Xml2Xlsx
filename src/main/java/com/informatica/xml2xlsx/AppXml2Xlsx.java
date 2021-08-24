@@ -845,7 +845,7 @@ public class AppXml2Xlsx {
 					
 					// If a cell specifies a default style then apply it to the entire column
 					if(cell.hasAttribute("columnStyle")) {
-						xlSheet.getColumnHelper().setColDefaultStyle(c, styleMap.get(cell.getAttribute("columnStyle")));
+						xlSheet.getColumnHelper().setColDefaultStyle(c, styleMap.get(cell.getAttribute("columnStyle"))); 
 					}
 					
 					// If a cell style has been applied then add it to the cell
