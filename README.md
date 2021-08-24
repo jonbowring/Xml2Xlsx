@@ -88,6 +88,7 @@ XPath|Description
 /workbook/worksheet/row|Mandatory. Used to specify a row of data to be added to the Excel file. Maximum number of rows that can be included is 1,048,576.
 /workbook/worksheet/row/cell|Mandatory. Used to specify a cell of data to be added to the Excel file. Maximum number of cells or columns that can be included is 16,384.
 /workbook/worksheet/row/cell/@style|Optional. The name of the re-usable style to be applied to the cell.
+/workbook/worksheet/row/cell/@defaultStyle|Optional. The name of the re-usable style to be applied to the entire column. This is useful if you'd like to specify a style at a header row level.
 /workbook/worksheet/row/cell/@validation|Optional. The name of the re-usable validation to be applied to the cell.
 /workbook/worksheet/pivot|Optional. Used to define if a worksheet should include a pivot table.
 /workbook/worksheet/pivot/@location|Mandatory. Defines the top left cell for positioning the pivot table (e.g. "A1").
