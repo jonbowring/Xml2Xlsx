@@ -843,6 +843,11 @@ public class AppXml2Xlsx {
 						xlTable.createColumn(cellValue, c);
 					}
 					
+					// If a cell specifies a default style then apply it to the entire column
+					if(cell.hasAttribute("defaultStyle")) {
+						xlSheet.getColumnHelper().setColDefaultStyle(c, styleMap.get(cell.getAttribute("defaultStyle")));
+					}
+					
 					// If a cell style has been applied then add it to the cell
 					if(cell.hasAttribute("style")) {
 						
