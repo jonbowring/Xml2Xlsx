@@ -732,6 +732,12 @@ public class AppXml2Xlsx {
 					xlSheet.setColumnWidth(colIndex, colWidth);
 					ignoreAutoFit.add(colIndex);
 				}
+				
+				// If the column has a default style then apply it
+				if(col.hasAttribute("index") && col.hasAttribute("style")) {
+					int colIndex = Integer.parseInt(col.getAttribute("index"));
+					xlSheet.getColumnHelper().setColDefaultStyle(colIndex, styleMap.get(col.getAttribute("style")));
+				}
 			}
 			
 			

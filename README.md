@@ -44,7 +44,7 @@ XPath|Description
 /workbook/styles/style/font/strikeout|Optional. An empty element used as a flag to indicate if the font should have the strikeout styling applied.
 /workbook/styles/style/font/bold|Optional. An empty element used as a flag to indicate if the font should be bold.
 /workbook/styles/style/font/underline|Optional. An empty element used as a flag to indicate if the font should be underlined.
-/workbook/styles/style/wrap|Optional. An empty element used as a flag to indicate text wrapping should be applied to the cell. If a cell contains newline characters represented as "\n" then this flag must be included for the newlines to be properly displayed.
+/workbook/styles/style/wrap|Optional. An empty element used as a flag to indicate text wrapping should be applied to the cell. If a cell contains newline characters represented as "&#10;" then this flag must be included for the newlines to be properly displayed.
 /workbook/styles/style/format|Optional. Used to define the data type and pattern format applied to the cell.
 /workbook/styles/style/format/@type|Mandatory. Used to specify the data type. Possible values include "currency", "date", "datetime", "float", "fraction", "general", "int", "percent", "scientific" and "string". Note: when a cell uses the format "date" the XML value must be in the format "yyyy-MM-dd". When a cell uses the format "datetime" the XML value must be in the format "yyyy-MM-dd hh:mm:ss".
 /workbook/styles/style/format/@formula|Optional. Used to indicate if the cell value should be treated as a formula. Possible values include "true" or "false".
@@ -79,6 +79,7 @@ XPath|Description
 /workbook/worksheet/column|Mandatory. Used to define column level settings if needed.
 /workbook/worksheet/column/@index|Mandatory. The index of the column for the settings to be applied to. The first column has an index of 0.
 /workbook/worksheet/column/@width|Optional. Sets the width (in units of 1/256th of a character width).
+/workbook/worksheet/column/@style|Optional. Sets the default style for a column.
 /workbook/worksheet/table|Optional. Used to define if the worksheet data should be contained within a table.
 /workbook/worksheet/table/@name|Mandatory. The name for the table. The name can only contain numbers, letters and underscores.
 /workbook/worksheet/table/@colStripes|Optional. Used to specify if column colour striping should be applied. Possible values include "true" and "false".
