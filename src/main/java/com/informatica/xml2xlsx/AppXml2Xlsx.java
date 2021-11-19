@@ -583,7 +583,7 @@ public class AppXml2Xlsx {
 				}
 				
 				// If it is a length or value validation type
-				if(validationType.equals("length") || validationType.equals("value")) {
+				if(validationType.equals("length") || validationType.equals("numerical")) {
 					
 					// If set get the operator and add it to the validation
 					Element operatorEl = (Element) validationEl.getElementsByTagName("operator").item(0);
@@ -642,26 +642,28 @@ public class AppXml2Xlsx {
 							validation.setLengthMax(Integer.parseInt(lengthMaxValueEl.getTextContent()));
 						}
 					} // End if length validation
-					else if(validationType.equals("value")) {
+					
+					// If a numerical validation type
+					else if(validationType.equals("numerical")) {
 						
 						// If set get and set the exact value
-						Element valueExactEl = (Element) validationEl.getElementsByTagName("value").item(0);
-						if(valueExactEl != null) {
-							validation.setValueExact(Float.parseFloat(valueExactEl.getTextContent()));
+						Element numExactEl = (Element) validationEl.getElementsByTagName("value").item(0);
+						if(numExactEl != null) {
+							validation.setNumExact(Float.parseFloat(numExactEl.getTextContent()));
 						}
 						
 						// If set get and set the min value
-						Element valueMinEl = (Element) validationEl.getElementsByTagName("min").item(0);
-						if(valueMinEl != null) {
-							validation.setValueMin(Float.parseFloat(valueMinEl.getTextContent()));
+						Element numMinEl = (Element) validationEl.getElementsByTagName("min").item(0);
+						if(numMinEl != null) {
+							validation.setNumMin(Float.parseFloat(numMinEl.getTextContent()));
 						}
 						
 						// If set get and set the max value
-						Element valueMaxEl = (Element) validationEl.getElementsByTagName("max").item(0);
-						if(valueMaxEl != null) {
-							validation.setValueMax(Float.parseFloat(valueMaxEl.getTextContent()));
+						Element numMaxEl = (Element) validationEl.getElementsByTagName("max").item(0);
+						if(numMaxEl != null) {
+							validation.setNumMax(Float.parseFloat(numMaxEl.getTextContent()));
 						}
-					} // End if value validation
+					} // End if numerical validation
 					
 					
 					
@@ -1094,13 +1096,13 @@ public class AppXml2Xlsx {
 							} // End if length validation
 							
 							// Else if the type uses a value validation
-							else if(validation.getType().equals("value")) {
+							else if(validation.getType().equals("numerical")) {
 								
 								// Get the operator and length values
 								int operator = validation.getOperator();
-								Float valueExact = validation.getValueExact();
-								Float valueMin = validation.getValueMin();
-								Float valueMax = validation.getValueMax();
+								Float valueExact = validation.getNumExact();
+								Float valueMin = validation.getNumMin();
+								Float valueMax = validation.getNumMax();
 								
 								// If the operation only requires a single value
 								if((operator == OperatorType.EQUAL || 

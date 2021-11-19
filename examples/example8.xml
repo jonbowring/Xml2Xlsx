@@ -48,28 +48,28 @@
 			<max>20</max>
 		</validation>
     <validation name="my_validation8">
-			<type>value</type>
+			<type>numerical</type>
 			<operator>GREATER_OR_EQUAL</operator>
 			<value>10</value>
 		</validation>
 		<validation name="my_validation9">
-			<type>value</type>
+			<type>numerical</type>
 			<operator>LESS_OR_EQUAL</operator>
 			<value>10</value>
 		</validation>
 		<validation name="my_validation10">
-			<type>value</type>
+			<type>numerical</type>
 			<operator>EQUAL</operator>
 			<value>10</value>
 		</validation>
 		<validation name="my_validation11">
-			<type>value</type>
+			<type>numerical</type>
 			<operator>BETWEEN</operator>
 			<min>10</min>
 			<max>20</max>
 		</validation>
 		<validation name="my_validation12">
-			<type>value</type>
+			<type>numerical</type>
 			<operator>NOT_BETWEEN</operator>
 			<min>10</min>
 			<max>20</max>

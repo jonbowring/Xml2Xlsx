@@ -127,7 +127,7 @@
 			<xs:enumeration value="fixed-list"/>
 			<xs:enumeration value="formula-list"/>
 			<xs:enumeration value="length"/>
-			<xs:enumeration value="value"/>
+			<xs:enumeration value="numerical"/>
 		</xs:restriction>
 	</xs:simpleType>
 
