@@ -8,6 +8,7 @@ public class Validation {
 	
 	private String name, formula, type;
 	private int lengthMin, lengthMax, lengthValue, operator;
+	private Float valueMin, valueMax, valueExact;
 	private String[] values;
 	
 	/*
@@ -23,6 +24,9 @@ public class Validation {
 		this.lengthValue = -1;
 		this.lengthMin = -1;
 		this.lengthMax = -1;
+		this.valueExact = null;
+		this.valueMin = null;
+		this.valueMax = null;
 	}
 	
 	/*
@@ -61,6 +65,18 @@ public class Validation {
 		return this.lengthValue;
 	}
 	
+	public Float getValueMin() {
+		return this.valueMin;
+	}
+	
+	public Float getValueMax() {
+		return this.valueMax;
+	}
+	
+	public Float getValueExact() {
+		return this.valueExact;
+	}
+	
 	/*
 	 * Setters
 	 */
@@ -95,6 +111,18 @@ public class Validation {
 	
 	public void setLengthValue(int lengthValue) {
 		this.lengthValue = lengthValue;
+	}
+	
+	public void setValueMin(Float valueMin) {
+		this.valueMin = valueMin;
+	}
+	
+	public void setValueMax(Float valueMax) {
+		this.valueMax = valueMax;
+	}
+	
+	public void setValueExact(Float valueExact) {
+		this.valueExact = valueExact;
 	}
 	
 }
