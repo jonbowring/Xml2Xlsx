@@ -582,8 +582,8 @@ public class AppXml2Xlsx {
 					validation.setFormula(formulaEl.getTextContent());
 				}
 				
-				// If it is a length validation type
-				if(validationType.equals("length")) {
+				// If it is a length or value validation type
+				if(validationType.equals("length") || validationType.equals("value")) {
 					
 					// If set get the operator and add it to the validation
 					Element operatorEl = (Element) validationEl.getElementsByTagName("operator").item(0);
@@ -617,29 +617,55 @@ public class AppXml2Xlsx {
 							default:
 								// do something
 								break;
-						} // End of operator swicth statement
+						} // End of operator switch statement
 						
 					} // End if operator element is not null
 					
-					// If set get and set the length value
-					Element lengthValueEl = (Element) validationEl.getElementsByTagName("value").item(0);
-					if(lengthValueEl != null) {
-						validation.setLengthValue(Integer.parseInt(lengthValueEl.getTextContent()));
-					}
+					// If it is a length validation type
+					if(validationType.equals("length")) {
+						
+						// If set get and set the length value
+						Element lengthValueEl = (Element) validationEl.getElementsByTagName("value").item(0);
+						if(lengthValueEl != null) {
+							validation.setLengthValue(Integer.parseInt(lengthValueEl.getTextContent()));
+						}
+						
+						// If set get and set the length min value
+						Element lengthMinValueEl = (Element) validationEl.getElementsByTagName("min").item(0);
+						if(lengthMinValueEl != null) {
+							validation.setLengthMin(Integer.parseInt(lengthMinValueEl.getTextContent()));
+						}
+						
+						// If set get and set the length max value
+						Element lengthMaxValueEl = (Element) validationEl.getElementsByTagName("max").item(0);
+						if(lengthMaxValueEl != null) {
+							validation.setLengthMax(Integer.parseInt(lengthMaxValueEl.getTextContent()));
+						}
+					} // End if length validation
+					else if(validationType.equals("value")) {
+						
+						// If set get and set the exact value
+						Element valueExactEl = (Element) validationEl.getElementsByTagName("value").item(0);
+						if(valueExactEl != null) {
+							validation.setValueExact(Float.parseFloat(valueExactEl.getTextContent()));
+						}
+						
+						// If set get and set the min value
+						Element valueMinEl = (Element) validationEl.getElementsByTagName("min").item(0);
+						if(valueMinEl != null) {
+							validation.setValueMin(Float.parseFloat(valueMinEl.getTextContent()));
+						}
+						
+						// If set get and set the max value
+						Element valueMaxEl = (Element) validationEl.getElementsByTagName("max").item(0);
+						if(valueMaxEl != null) {
+							validation.setValueMax(Float.parseFloat(valueMaxEl.getTextContent()));
+						}
+					} // End if value validation
 					
-					// If set get and set the length min value
-					Element lengthMinValueEl = (Element) validationEl.getElementsByTagName("min").item(0);
-					if(lengthMinValueEl != null) {
-						validation.setLengthMin(Integer.parseInt(lengthMinValueEl.getTextContent()));
-					}
 					
-					// If set get and set the length max value
-					Element lengthMaxValueEl = (Element) validationEl.getElementsByTagName("max").item(0);
-					if(lengthMaxValueEl != null) {
-						validation.setLengthMax(Integer.parseInt(lengthMaxValueEl.getTextContent()));
-					}
 					
-				} // End if length validation
+				} // End if length or value validation
 				
 				
 				
@@ -1065,7 +1091,44 @@ public class AppXml2Xlsx {
 									
 								}
 								
-							} // End if formula list
+							} // End if length validation
+							
+							// Else if the type uses a value validation
+							else if(validation.getType().equals("value")) {
+								
+								// Get the operator and length values
+								int operator = validation.getOperator();
+								Float valueExact = validation.getValueExact();
+								Float valueMin = validation.getValueMin();
+								Float valueMax = validation.getValueMax();
+								
+								// If the operation only requires a single value
+								if((operator == OperatorType.EQUAL || 
+										operator == OperatorType.GREATER_OR_EQUAL || 
+										operator == OperatorType.GREATER_THAN || 
+										operator == OperatorType.LESS_OR_EQUAL || 
+										operator == OperatorType.LESS_THAN || 
+										operator == OperatorType.NOT_EQUAL) && 
+										valueExact != null) {
+									
+									// Build the validation
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createNumericConstraint(XSSFDataValidationConstraint.ValidationType.DECIMAL, operator, Float.toString(valueExact), null);
+									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
+									
+								}
+								// If the operation requires two values
+								else if((operator == OperatorType.BETWEEN || 
+										operator == OperatorType.NOT_BETWEEN) && 
+										valueMin != null &&
+										valueMax != null) {
+									
+									// Build the validation
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper.createNumericConstraint(XSSFDataValidationConstraint.ValidationType.DECIMAL, operator, Float.toString(valueMin), Float.toString(valueMax));
+									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint, rangeAddress);
+									
+								}
+								
+							} // End if value validation
 							
 							// Apply the validation to the sheet
 							dvValidation.setSuppressDropDownArrow(true);

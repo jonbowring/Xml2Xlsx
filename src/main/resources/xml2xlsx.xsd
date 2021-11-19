@@ -8,7 +8,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 
-	<xs:simpleType name="lengthOperatorType">
+	<xs:simpleType name="validationOperatorType">
 		<xs:restriction base="xs:string">
 			<xs:enumeration value="EQUAL"/>
 			<xs:enumeration value="NOT_EQUAL"/>
@@ -127,6 +127,7 @@
 			<xs:enumeration value="fixed-list"/>
 			<xs:enumeration value="formula-list"/>
 			<xs:enumeration value="length"/>
+			<xs:enumeration value="value"/>
 		</xs:restriction>
 	</xs:simpleType>
 
@@ -295,7 +296,7 @@
 											</xs:complexType>
 										</xs:element>
 										<xs:element type="xs:string" name="formula" minOccurs="0" maxOccurs="1"/>
-										<xs:element type="lengthOperatorType" name="operator" minOccurs="0" maxOccurs="1"/>
+										<xs:element type="validationOperatorType" name="operator" minOccurs="0" maxOccurs="1"/>
 										<xs:element type="xs:int" name="value" minOccurs="0" maxOccurs="1"/>
 										<xs:element type="xs:int" name="min" minOccurs="0" maxOccurs="1"/>
 										<xs:element type="xs:int" name="max" minOccurs="0" maxOccurs="1"/>
