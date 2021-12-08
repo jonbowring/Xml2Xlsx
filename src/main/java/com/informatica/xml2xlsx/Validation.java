@@ -6,7 +6,7 @@ public class Validation {
 	 * Attribute declaration
 	 */
 	
-	private String name, formula, type;
+	private String name, formula, type, dateExact, dateMin, dateMax;
 	private int lengthMin, lengthMax, lengthValue, operator;
 	private Float numMin, numMax, numExact;
 	private String[] values;
@@ -27,6 +27,28 @@ public class Validation {
 		this.numExact = null;
 		this.numMin = null;
 		this.numMax = null;
+		this.dateExact = null;
+		this.dateMin = null;
+		this.dateMax = null;
+	}
+	
+	/*
+	 * Helpers
+	 */
+	
+	private String getDateFuncStr(String date) {
+		
+		if(date == null) {
+			return null;
+		}
+		else {
+			String[] tokens = date.split("-");
+			Integer year = Integer.parseInt(tokens[0]);
+			Integer month = Integer.parseInt(tokens[1]);
+			Integer day = Integer.parseInt(tokens[2]);
+			return String.format("Date(%s, %s, %s)", year.toString(), month.toString(), day.toString());
+		}
+		
 	}
 	
 	/*
@@ -77,6 +99,30 @@ public class Validation {
 		return this.numExact;
 	}
 	
+	public String getDateMin() {
+		return this.dateMin;
+	}
+	
+	public String getDateMax() {
+		return this.dateMax;
+	}
+	
+	public String getDateExact() {
+		return this.dateExact;
+	}
+	
+	public String getDateMinFunc() {
+		return getDateFuncStr(this.dateMin);
+	}
+	
+	public String getDateMaxFunc() {
+		return getDateFuncStr(this.dateMax);
+	}
+	
+	public String getDateExactFunc() {
+		return getDateFuncStr(this.dateExact);
+	}
+	
 	/*
 	 * Setters
 	 */
@@ -123,6 +169,18 @@ public class Validation {
 	
 	public void setNumExact(Float numExact) {
 		this.numExact = numExact;
+	}
+	
+	public void setDateMin(String dateMin) {
+		this.dateMin = dateMin;
+	}
+	
+	public void setDateMax(String dateMax) {
+		this.dateMax = dateMax;
+	}
+	
+	public void setDateExact(String dateExact) {
+		this.dateExact = dateExact;
 	}
 	
 }
