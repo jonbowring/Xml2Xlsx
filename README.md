@@ -56,10 +56,10 @@ XPath|Description
 -----|-----------
 /workbook/validations/validation|Optional. Used to define re-usable data validation rules to be applied to cells.
 /workbook/validations/validation/@name|Mandatory. The name for the data validation. This name is used by cells to reference the data validation to be applied. The name can only contain numbers, letters and underscores.
-/workbook/validations/validation/type|Mandatory. The type of data validation to be applied. Possible values include "fixed-list", "formula-list", "length" and "numerical".
-/workbook/validations/validation/value|Mandatory if type is set to "length" or "numerical" and the "operator" is either "EQUAL", "NOT_EQUAL", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_THAN" or "LESS_OR_EQUAL". Used to determine the operator to be applied for the "length" and "value" validations.
-/workbook/validations/validation/min|Mandatory if type is set to "length" or "numerical" and the "operator" is either "BETWEEN" or "NOT_BETWEEN". Used to determine the minimum length value for the validation to be applied.
-/workbook/validations/validation/max|Mandatory if type is set to "length" or "numerical" and the "operator" is either "BETWEEN" or "NOT_BETWEEN". Used to determine the maximum length value for the validation to be applied.
+/workbook/validations/validation/type|Mandatory. The type of data validation to be applied. Possible values include "fixed-list", "formula-list", "length", "numerical" and "date".
+/workbook/validations/validation/value|Mandatory if type is set to "length", "numerical" or "date" and the "operator" is either "EQUAL", "NOT_EQUAL", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_THAN" or "LESS_OR_EQUAL". Date values must be entered using the format "yyyy-MM-dd". Used to determine the operator to be applied for the "length" and "value" validations.
+/workbook/validations/validation/min|Mandatory if type is set to "length", "numerical" or "date" and the "operator" is either "BETWEEN" or "NOT_BETWEEN". Date values must be entered using the format "yyyy-MM-dd". Used to determine the minimum length value for the validation to be applied.
+/workbook/validations/validation/max|Mandatory if type is set to "length", "numerical" or "date" and the "operator" is either "BETWEEN" or "NOT_BETWEEN". Date values must be entered using the format "yyyy-MM-dd". Used to determine the maximum length value for the validation to be applied.
 /workbook/validations/validation/operator|Mandatory if type is set to "length" or "numerical". Possible operations include "EQUAL", "NOT_EQUAL", "GREATER_THAN", "GREATER_OR_EQUAL", "LESS_THAN", "LESS_OR_EQUAL", "BETWEEN" and "NOT_BETWEEN".
 /workbook/validations/validation/values|Mandatory if type is set to "fixed-list".
 /workbook/validations/validation/values/value|Mandatory. One or more values to be used in the data validation.

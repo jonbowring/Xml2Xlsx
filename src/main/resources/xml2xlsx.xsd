@@ -128,6 +128,7 @@
 			<xs:enumeration value="formula-list"/>
 			<xs:enumeration value="length"/>
 			<xs:enumeration value="numerical"/>
+			<xs:enumeration value="date"/>
 		</xs:restriction>
 	</xs:simpleType>
 

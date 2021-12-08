@@ -143,6 +143,7 @@ public class AppXml2Xlsx {
 
 	} // End main
 
+	
 	// function to sort hashmap by values
 	public static HashMap<String, Integer> sortByValue(HashMap<String, Integer> hm) {
 		// Create a list from elements of HashMap
@@ -163,6 +164,7 @@ public class AppXml2Xlsx {
 		return temp;
 	}
 	
+	
 	// This function is used to read the markup from the XML file
 	private static void loadXmlData(String src) throws ParserConfigurationException, SAXException, IOException {
 
@@ -174,6 +176,7 @@ public class AppXml2Xlsx {
 		dbf.setNamespaceAware(true);
 
 	}
+	
 	
 	// This function is used to load the style objects
 	private static void loadStyles() throws XPathExpressionException {
@@ -651,7 +654,7 @@ public class AppXml2Xlsx {
 				}
 
 				// If it is a length or value validation type
-				if (validationType.equals("length") || validationType.equals("numerical")) {
+				if (validationType.equals("length") || validationType.equals("numerical") || validationType.equals("date")) {
 
 					// If set get the operator and add it to the validation
 					Element operatorEl = (Element) validationEl.getElementsByTagName("operator").item(0);
@@ -732,6 +735,29 @@ public class AppXml2Xlsx {
 							validation.setNumMax(Float.parseFloat(numMaxEl.getTextContent()));
 						}
 					} // End if numerical validation
+					
+					// TODO
+					// If a date validation type
+					else if (validationType.equals("date")) {
+
+						// If set get and set the exact value
+						Element dateExactEl = (Element) validationEl.getElementsByTagName("value").item(0);
+						if (dateExactEl != null) {
+							validation.setDateExact(dateExactEl.getTextContent());
+						}
+
+						// If set get and set the min value
+						Element dateMinEl = (Element) validationEl.getElementsByTagName("min").item(0);
+						if (dateMinEl != null) {
+							validation.setDateMin(dateMinEl.getTextContent());
+						}
+
+						// If set get and set the max value
+						Element dateMaxEl = (Element) validationEl.getElementsByTagName("max").item(0);
+						if (dateMaxEl != null) {
+							validation.setDateMax(dateMaxEl.getTextContent());
+						}
+					} // End if date validation
 
 				} // End if length or value validation
 
@@ -1142,7 +1168,7 @@ public class AppXml2Xlsx {
 
 							} // End if length validation
 
-							// Else if the type uses a value validation
+							// Else if the type uses a numerical validation
 							else if (validation.getType().equals("numerical")) {
 
 								// Get the operator and length values
@@ -1180,7 +1206,44 @@ public class AppXml2Xlsx {
 
 								}
 
-							} // End if value validation
+							} // End if numerical validation
+							
+							// TODO
+							// Else if the type uses a date validation
+							else if (validation.getType().equals("date")) {
+
+								// Get the operator and length values
+								int operator = validation.getOperator();
+								String valueExact = validation.getDateExactFunc();
+								String valueMin = validation.getDateMinFunc();
+								String valueMax = validation.getDateMaxFunc();
+
+								// If the operation only requires a single value
+								if ((operator == OperatorType.EQUAL || operator == OperatorType.GREATER_OR_EQUAL
+										|| operator == OperatorType.GREATER_THAN
+										|| operator == OperatorType.LESS_OR_EQUAL || operator == OperatorType.LESS_THAN
+										|| operator == OperatorType.NOT_EQUAL) && valueExact != null) {
+
+									// Build the validation
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper
+											.createDateConstraint(operator, valueExact, null, "yyyy-MM-dd");
+									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint,
+											rangeAddress);
+
+								}
+								// If the operation requires two values
+								else if ((operator == OperatorType.BETWEEN || operator == OperatorType.NOT_BETWEEN)
+										&& valueMin != null && valueMax != null) {
+
+									// Build the validation
+									XSSFDataValidationConstraint dvConstraint = (XSSFDataValidationConstraint) dvHelper
+											.createDateConstraint(operator, valueMin, valueMax, "yyyy-MM-dd");
+									dvValidation = (XSSFDataValidation) dvHelper.createValidation(dvConstraint,
+											rangeAddress);
+
+								}
+
+							} // End if date validation
 
 							// Apply the validation to the sheet
 							dvValidation.setSuppressDropDownArrow(true);
